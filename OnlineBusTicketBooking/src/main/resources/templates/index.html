@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Management Application</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 70px; /* Adjust for fixed navbar */
+            background-color: #a2db37;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand h1 {
+            margin-left: 430px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            font-size: 2.5rem;
+            color: #ffffff;
+        }
+        .navbar-dark {
+            background-color: #000102;
+        }
+        .table-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            color: #343a40;
+            font-weight: bold;
+        }
+        .table thead th {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+        .btn-info, .btn-primary, .btn-danger {
+            color: #ffffff;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            border: none;
+        }
+        .btn-info2 {
+            position: relative;
+            right: 480px; 
+            background-color: #343a40;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .page-link {
+            color: #17a2b8;
+        }
+        .page-link:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<!-- Header part -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <h1>List of the Buses</h1>
+        </a>
+        <div class="ml-auto">
+            <a href="/showRoute" class="btn btn-primary">Show Route</a>
+            <a href="/bookings/viewBookingHistory" class="btn btn-secondary">Booking History</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+<!-- Tabular data with pagination -->
+<div class="container my-5">
+    <div class="text-center">
+        <h1>Bus List for User</h1>
+    </div>
+    <div class="table-container">
+        <table class="table table-striped table-responsive-md">
+            <thead>
+                <tr>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=busName&sortDir=' + ${reverseSortDir}}">
+                            Bus Name
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=driverName&sortDir=' + ${reverseSortDir}}">
+                            Driver Name
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=busType&sortDir=' + ${reverseSortDir}}">
+                           Bus Type
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=routeFrom&sortDir=' + ${reverseSortDir}}">
+                            Route From
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=routeTo&sortDir=' + ${reverseSortDir}}">
+                            Route To
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=busJourneyDate&sortDir=' + ${reverseSortDir}}">
+                            Journey Date
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=arrivalTime&sortDir=' + ${reverseSortDir}}">
+                            Arrival Time
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=departureTime&sortDir=' + ${reverseSortDir}}">
+                            Departure Time
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=seats&sortDir=' + ${reverseSortDir}}">
+                            Total Seats
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=distance&sortDir=' + ${reverseSortDir}}">
+                            Distance (in kms)
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/page/' + ${currentPage} + '?sortField=fare&sortDir=' + ${reverseSortDir}}">
+                            Fare (in Rs)
+                        </a>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+            <tbody>
+                <tr th:each="bus : ${buses}">
+                    <td th:text="${bus.busName}">Bus Name</td>
+                    <td th:text="${bus.driverName}">Driver Name</td>
+                    <td th:text="${bus.busType}">Bus Type</td>
+                    <td th:text="${bus.routeFrom}">Route From</td>
+                    <td th:text="${bus.routeTo}">Route To</td>
+                    <td th:text="${bus.busJourneyDate}">Journey Date</td>
+                    <td th:text="${bus.arrivalTime}">Arrival Time</td>
+                    <td th:text="${bus.departureTime}">Departure Time</td>
+                    <td th:text="${bus.seats}">Total Seats</td>
+                    <td th:text="${bus.distance}">Distance (in Kms)</td>
+                    <td th:text="${bus.fare}">Fare (in Rs)</td>
+                    <td>
+                        <form th:action="@{/bookings/addBooking}" method="get">
+                            <input type="hidden" name="busId" th:value="${bus.busId}">
+                            <button type="submit" class="btn btn-primary btn-sm">Book Now</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>           
+        </table>
+    </div>
+    <div th:if="${totalPages > 1}" class="pagination-container">
+        <div>Total Rows: <span th:text="${totalItems}"></span></div>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a class="page-link" th:if="${currentPage != i}" th:href="@{'/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                    <span class="page-link" th:unless="${currentPage != i}">[[${i}]]</span>
+                </li>
+                <li class="page-item" th:if="${currentPage < totalPages}">
+                    <a class="page-link" th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAi8ZH4CfwC/7e3gO6dYN2YcAksWzk1bwQ3g7buCNYoAn6WLGjCwECwHGsIQ2Il"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+ni8XKzOZbKI2F3k6G8zKR49S8Ff4VVzq+zQZ6p3zgzR0PBpC7rP47kC" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.book-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                this.textContent = 'Booked';
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-secondary');
+                this.disabled = true;
+            });
+        });
+    });
+</script>
+</body>
+</html>

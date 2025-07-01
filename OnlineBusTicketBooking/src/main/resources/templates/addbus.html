@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <style>
+        body{
+        background-color: lightgreen;
+        }
+
+        .card-header{
+            text-align: center;
+         background-color: grey;
+        }
+        .btn{
+            background-color: grey;
+        }
+    </style>
+
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4" >
+            <div class="container">
+                <a class="navbar-brand" href="#">Admin Dashboard</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/showRoute">Manage Routes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/adminBusList">Bus Lists</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>   
+            </div>
+        </nav>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            You have successfully added a bus in our app!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header text-white">
+                <h3 class="card-title mb-0">Add Bus</h3>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/addBus}" method="post">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="busName">Bus Name</label>
+                            <input type="text" class="form-control" id="busName" name="busName" placeholder="Enter bus name" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="driverName">Driver Name</label>
+                            <input type="text" class="form-control" id="driverName" name="driverName" placeholder="Enter driver name" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="busType">Bus Type</label>
+                            <input type="text" class="form-control" id="busType" name="busType" placeholder="Enter bus type" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="routeFrom">Route From</label>
+                            <input type="text" class="form-control" id="routeFrom" name="routeFrom" placeholder="Enter starting point" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="routeTo">Route To</label>
+                            <input type="text" class="form-control" id="routeTo" name="routeTo" placeholder="Enter destination" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="busJourneyDate">Journey Date</label>
+                            <input type="date" class="form-control" id="busJourneyDate" name="busJourneyDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="departureTime">Departure Time</label>
+                            <input type="time" class="form-control" id="departureTime" name="departureTime" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="arrivalTime">Arrival Time</label>
+                            <input type="time" class="form-control" id="arrivalTime" name="arrivalTime" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="seats">Total Seats</label>
+                            <input type="number" class="form-control" id="seats" name="seats" placeholder="Enter total seats" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="distance">Distance (km)</label>
+                            <input type="number" class="form-control" id="distance" name="distance" placeholder="Enter distance" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-block text-white">Add Bus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
