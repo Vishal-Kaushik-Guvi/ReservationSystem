@@ -12,6 +12,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/login.css}" />
+
 </head>
 
 <body>
@@ -22,23 +23,11 @@
             </div>
         </nav>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div th:if="${param.error}" class="toast align-items-center text-white bg-danger border-0 show" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-                Invalid email or password.
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
-
-
         <div class="container">
             <div class="col-md-6">
-                <div th:if="${param.error}">
+                <!-- <div th:if="${param.error}">
                     <div class="alert alert-danger">Invalid email or password.</div>
-                </div>
+                </div> -->
                 <div class="card glass-card shadow-lg">
                     <div class="card-header text-center bg-transparent border-0">
                         <h2 class="text-white">Login</h2>
