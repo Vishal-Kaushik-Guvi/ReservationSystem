@@ -1,127 +1,80 @@
-/* Background Image */
 body {
-    background: url('/images/index.png') no-repeat center center fixed;
-    background-size: cover;
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
-.container{
-	position: relative;
-	top: 50px;
+.hero-section {
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  padding: 100px 20px;
+  text-align: center;
+  color: white;
+  animation: fadeInUp 1.5s ease-out;
 }
 
-/* Table Container */
-.table-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    overflow-x: auto;
-    max-width: 100%;
-    transition: all 0.3s ease;
+.hero-section h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Table Styles */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-    border-radius: 12px;
-    overflow: hidden;
-    white-space: nowrap;
+.hero-section p {
+  font-size: 1.25rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
 }
 
-.table th,
-.table td {
-    white-space: nowrap;
-    padding: 12px;
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeIn 1.2s ease-in;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.why-choose {
+  background-image: url('/static/images/index.png');
+  background-size: cover;
+  background-position: center;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+#about{
+	background-image: url('/static/images/index.png');
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .feature-card {
     text-align: center;
-    vertical-align: middle;
-}
-
-.table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #28a745;
-    color: black;
-    text-align: center;
-}
-
-/* Hover Effect */
-.table tbody tr:hover {
-    background-color: #eafbea;
-}
-
-/* Book Button */
-.book-btn {
-    transition: all 0.3s ease;
-}
-
-.book-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
-
-/* Pagination */
-.pagination-container {
-    margin-top: 30px;
-    text-align: center;
-}
-
-.pagination .page-link {
-    color: #28a745;
-    border-radius: 8px;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #28a745;
-    border-color: #28a745;
-    color: #fff;
-}
-
-/* Scrollbar Styling (Optional) */
-.table-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-/* Responsive Tweaks */
-@media (max-width: 768px) {
-    .table thead {
-        display: none;
-    }
-
-    .table, .table tbody, .table tr, .table td {
-        display: block;
-        width: 100%;
-    }
-
-    .table tr {
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px;
-    }
-
-    .table td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
-    }
-
-    .table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 15px;
-        width: 45%;
-        padding-left: 10px;
-        font-weight: bold;
-        text-align: left;
-        color: #333;
-    }
+  }
 }

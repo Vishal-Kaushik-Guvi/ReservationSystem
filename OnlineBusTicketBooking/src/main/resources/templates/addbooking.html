@@ -1,94 +1,53 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Booking</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .card-custom {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        .card-header-custom {
-            background-color: lightgreen;
-            color: white;
-        }
-        .card-body-custom {
-            background-color: #f9f9f9;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${pageTitle} ?: 'Add Booking'">Add Booking</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container mt-5">
-        <div class="card card-custom">
-            <div class="card-header card-header-custom">
-                <h4>Add Booking</h4>
-            </div>
-            <div class="card-body card-body-custom">
-                <form th:action="@{/bookings/addBooking}" method="post" th:object="${bookingDto}">
-                    <!-- Hidden field for busId -->
-                    <input type="hidden" name="busId" th:value="${busId}">
+<body class="bg-gray-100 min-h-screen">
 
-                    <div class="form-group">
-                        <label for="bookseat">Number of Seats</label>
-                        <input type="number" class="form-control" id="bookseat" th:field="*{bookseat}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="paymentType">Payment Type</label>
-                        <select class="form-control" id="paymentType" required>
-                            <option value="">Select Payment Type</option>
-                            <option value="card">Card</option>
-                            <option value="upi">UPI</option>
-                        </select>
-                    </div>
-                    <div id="cardDetails" style="display: none;">
-                        <div class="form-group">
-                            <label for="cardNumber">Card Number</label>
-                            <input type="number" class="form-control" id="cardNumber" th:field="*{cardNumber}">
-                        </div>
-                        <div class="form-group">
-                            <label for="cvv">CVV</label>
-                            <input type="number" class="form-control" id="cvv">
-                        </div>
-                    </div>
-                    <div id="upiDetails" style="display: none;">
-                        <div class="form-group">
-                            <label for="upiId">UPI ID</label>
-                            <input type="text" class="form-control" id="upiId" th:field="*{upiId}">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-success"  onclick="return confirm('Please! Confirm Your Payment?');">Pay</button>
-                </form>
-            </div>
+  <!-- Layout Fragments -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <div th:fragment="content">
+    <div class="max-w-2xl mx-auto bg-white rounded shadow p-8 mt-10">
+      <h2 class="text-3xl font-bold text-center text-green-600 mb-6">Add Booking</h2>
+
+      <form th:action="@{/bookings/addBooking}" method="post" th:object="${bookingDto}">
+        <input type="hidden" name="busId" th:value="${busId}" />
+
+        <!-- Optional Summary Info -->
+        <div class="mb-4 text-sm text-gray-700">
+          <p><strong>Bus:</strong> <span th:text="${busName}">Bus Name</span></p>
+          <p><strong>Route:</strong> <span th:text="${routeFrom}">From</span> to <span th:text="${routeTo}">To</span></p>
+          <p><strong>Journey Date:</strong> <span th:text="${journeyDate}">YYYY-MM-DD</span></p>
         </div>
-    </div>
 
-    <script>
-        document.getElementById('paymentType').addEventListener('change', function() {
-            var paymentType = this.value;
-            var cardDetails = document.getElementById('cardDetails');
-            var upiDetails = document.getElementById('upiDetails');
-            if (paymentType === 'card') {
-                cardDetails.style.display = 'block';
-                upiDetails.style.display = 'none';
-                document.getElementById('cardNumber').required = true;
-                document.getElementById('cvv').required = true;
-                document.getElementById('upiId').required = false;
-            } else if (paymentType === 'upi') {
-                cardDetails.style.display = 'none';
-                upiDetails.style.display = 'block';
-                document.getElementById('cardNumber').required = false;
-                document.getElementById('cvv').required = false;
-                document.getElementById('upiId').required = true;
-            } else {
-                cardDetails.style.display = 'none';
-                upiDetails.style.display = 'none';
-                document.getElementById('cardNumber').required = false;
-                document.getElementById('cvv').required = false;
-                document.getElementById('upiId').required = false;
-            }
-        });
-    </script>
+        <div class="mb-4">
+          <label for="bookseat" class="block font-semibold text-gray-800">Number of Seats</label>
+          <input type="number" class="form-control w-full p-2 border border-gray-300 rounded" id="bookseat" th:field="*{bookseat}" required />
+        </div>
+
+        <div class="mt-6 text-center">
+          <button type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow">
+            Confirm Booking
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-6 text-center">
+        <a th:href="@{/bookings/payment(bookingId=${bookingId})}"
+           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded shadow">
+          Make Payment
+        </a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

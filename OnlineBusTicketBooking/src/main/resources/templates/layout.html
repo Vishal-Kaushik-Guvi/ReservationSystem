@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${pageTitle} ?: 'GoReserve'">GoReserve</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" th:href="@{/css/index.css}" />
+  <link rel="stylesheet" th:href="@{/css/navbar.css}" />
+</head>
+
+<body class="bg-gradient-to-r from-indigo-100 to-blue-100 min-h-screen">
+
+  <!-- Navbar Fragment -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <!-- Content Slot - This line will be replaced by child templates using th:insert -->
+  <main class="py-10 px-4 max-w-7xl mx-auto">
+    <div th:replace="${body} :: content">Loading...</div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center py-4 mt-10 shadow-inner">
+    <p class="text-gray-600">© 2025 GoReserve. All rights reserved.</p>
+  </footer>
+
+</body>
+
+</html>

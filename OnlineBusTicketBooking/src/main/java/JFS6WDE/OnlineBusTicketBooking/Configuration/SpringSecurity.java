@@ -44,12 +44,12 @@ public class SpringSecurity {
         http
                 .csrf(csrf -> csrf.disable()) // Consider enabling this in production
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 👈 Allow static resources
-                        .requestMatchers("/register/**").permitAll()
-                        .requestMatchers("/users").hasRole("ADMIN")
-                        .requestMatchers("/addBus").hasRole("ADMIN")
-                        .requestMatchers("/adminBusList").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                	    .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                	    .requestMatchers("/register/**", "/index", "/").permitAll()
+                	    .requestMatchers("/users", "/addBus", "/adminBusList").hasRole("ADMIN")
+                	    .requestMatchers("/book-ticket", "/find-bus", "/booking-history").authenticated() // 👈 require login
+                	    .anyRequest().authenticated()
+                	)
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")

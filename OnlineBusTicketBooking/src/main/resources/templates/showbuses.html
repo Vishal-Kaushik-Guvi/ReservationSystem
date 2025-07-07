@@ -1,0 +1,110 @@
+<div th:fragment="content">
+  <div class="container mx-auto py-10 px-4">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">Available Buses</h2>
+
+    <!-- Search Input -->
+    <div class="mb-4">
+      <input type="text" id="searchInput" placeholder="Search buses..."
+        class="form-control w-full px-4 py-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        onkeyup="filterTable()">
+    </div>
+
+    <!-- Table Section -->
+    <div class="overflow-x-auto">
+      <table class="table-auto w-full text-sm text-center border border-gray-300 bg-white shadow-md">
+        <thead class="bg-gray-700 text-white">
+          <tr>
+            <th class="px-3 py-2">Bus Name</th>
+            <th class="px-3 py-2">Driver Name</th>
+            <th class="px-3 py-2">Bus Type</th>
+            <th class="px-3 py-2">Route From</th>
+            <th class="px-3 py-2">Route To</th>
+            <th class="px-3 py-2">Journey Date</th>
+            <th class="px-3 py-2">Arrival Time</th>
+            <th class="px-3 py-2">Departure Time</th>
+            <th class="px-3 py-2">Total Seats</th>
+            <th class="px-3 py-2">Distance (km)</th>
+            <th class="px-3 py-2">Fare (₹)</th>
+            <th class="px-3 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="busTableBody">
+          <tr th:each="bus : ${buses}" class="border-t">
+            <td th:text="${bus.busName}" class="px-2 py-1"></td>
+            <td th:text="${bus.driverName}" class="px-2 py-1"></td>
+            <td th:text="${bus.busType}" class="px-2 py-1"></td>
+            <td th:text="${bus.routeFrom}" class="px-2 py-1"></td>
+            <td th:text="${bus.routeTo}" class="px-2 py-1"></td>
+            <td th:text="${bus.busJourneyDate}" class="px-2 py-1"></td>
+            <td th:text="${bus.arrivalTime}" class="px-2 py-1"></td>
+            <td th:text="${bus.departureTime}" class="px-2 py-1"></td>
+            <td th:text="${bus.seats}" class="px-2 py-1"></td>
+            <td th:text="${bus.distance}" class="px-2 py-1"></td>
+            <td th:text="${bus.fare}" class="px-2 py-1"></td>
+            <td class="px-2 py-1">
+              <form th:action="@{/bookings/addBooking}" method="get">
+                <input type="hidden" name="busId" th:value="${bus.busId}">
+                <button type="submit"
+                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs">Book Now</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-center space-x-2">
+      <button onclick="prevPage()" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600">Prev</button>
+      <span id="pageIndicator" class="text-gray-700 font-semibold"></span>
+      <button onclick="nextPage()" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600">Next</button>
+    </div>
+  </div>
+
+  <!-- JavaScript for pagination & search -->
+  <script>
+    const rowsPerPage = 10;
+    let currentPage = 1;
+
+    function paginateTable() {
+      const rows = document.querySelectorAll("#busTableBody tr");
+      const totalPages = Math.ceil(rows.length / rowsPerPage);
+      document.getElementById("pageIndicator").innerText = `Page ${currentPage} of ${totalPages}`;
+
+      rows.forEach((row, index) => {
+        row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
+      });
+    }
+
+    function nextPage() {
+      const rows = document.querySelectorAll("#busTableBody tr");
+      const totalPages = Math.ceil(rows.length / rowsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        paginateTable();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        paginateTable();
+      }
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#busTableBody tr");
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+      });
+
+      currentPage = 1;
+      paginateTable();
+    }
+
+    window.onload = paginateTable;
+  </script>
+</div>

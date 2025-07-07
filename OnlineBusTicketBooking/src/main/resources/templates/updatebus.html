@@ -1,109 +1,17 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Update Bus</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            background-color: #e9f7ef;
-            color: #333;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        .navbar {
-            background-color: #28a745;
-            color: white;
-        }
-        .navbar-brand, .navbar-nav .nav-link {
-            color: white;
-        }
-        .navbar-toggler {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-        }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #28a745;
-            color: white;
-            border-radius: 15px 15px 0 0;
-        }
-        .card-body {
-            background-color: #ffffff;
-            padding: 30px;
-        }
-        .form-group label {
-            font-weight: bold;
-            color: #28a745;
-        }
-        .form-control {
-            border-color: #28a745;
-        }
-        .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-        }
-        .btn-primary {
-            background-color: #28a745;
-            border-color: #28a745;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #218838;
-            border-color: #218838;
-        }
-        .alert {
-            margin-top: 20px;
-        }
-        .alert-info {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</head>
-<body>
+<div th:fragment="content">
     <div th:if="${success}">
         <div class="alert alert-info text-center">You have successfully updated a bus in our app!</div>
     </div>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container">
-                <a class="navbar-brand" href="#">Admin Dashboard</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Manage Buses</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div class="card">
-            <div class="card-header text-center">
+
+    <div class="container mt-5">
+        <div class="card shadow-lg rounded-lg">
+            <div class="card-header bg-success text-white text-center">
                 <h2>Update Bus</h2>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-white p-4">
                 <form action="/updateBus" method="post">
                     <input type="hidden" name="busId" th:value="${bus.busId}" />
+
                     <div class="form-group">
                         <label for="busName">Bus Name</label>
                         <input type="text" class="form-control" id="busName" name="busName" th:value="${bus.busName}" required>
@@ -141,17 +49,19 @@
                         <input type="number" class="form-control" id="seats" name="seats" th:value="${bus.seats}" required>
                     </div>
                     <div class="form-group">
-                        <label for="distance">Distance</label>
-                        <input type="number" class="form-control" id="distance" name="distance" placeholder="Enter distance" th:value="${bus.distance}" required>
+                        <label for="distance">Distance (in kms)</label>
+                        <input type="number" class="form-control" id="distance" name="distance" th:value="${bus.distance}" required>
                     </div>
                     <div class="form-group">
-                        <label for="fare">Fare</label>
+                        <label for="fare">Fare (₹)</label>
                         <input type="number" class="form-control" id="fare" name="fare" th:value="${bus.fare}" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Update Bus</button>
+
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-save"></i> Update Bus
+                    </button>
                 </form>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
