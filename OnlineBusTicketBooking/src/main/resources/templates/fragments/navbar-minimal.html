@@ -1,0 +1,26 @@
+<!-- templates/fragments/navbar-minimal.html -->
+<div th:fragment="minimal-navbar">
+  <nav class="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-green-600 to-blue-600 bg-opacity-90 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/index" class="text-white font-bold text-2xl">🚌 GoReserve</a>
+
+      <!-- Menu for desktop -->
+      <div class="space-x-6 text-white font-semibold hidden md:flex">
+        <a href="/index" class="hover:text-yellow-300 transition duration-300">Home</a>
+        <a href="/#about" class="hover:text-yellow-300 transition duration-300">About Us</a>
+      </div>
+
+      <!-- Mobile dropdown -->
+      <div class="md:hidden text-white">
+        <details class="relative">
+          <summary class="cursor-pointer font-semibold">Menu ⌄</summary>
+          <div class="absolute bg-white text-gray-800 mt-2 shadow-lg rounded w-40 right-0 z-50">
+            <a href="/index" class="block px-4 py-2 hover:bg-gray-100">Home</a>
+            <a href="/#about" class="block px-4 py-2 hover:bg-gray-100">About Us</a>
+          </div>
+        </details>
+      </div>
+    </div>
+  </nav>
+</div>

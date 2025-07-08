@@ -1,61 +1,89 @@
 <!-- templates/fragments/navbar.html -->
 <div th:fragment="navbar">
-  <nav class="bg-gradient-to-r from-green-600 to-blue-600 shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-4">
-      <div class="flex justify-between items-center h-16">
-        <!-- Logo -->
-        <a href="/index" class="text-white font-bold text-2xl">🚌 GoReserve</a>
+	<nav
+		class="bg-gradient-to-r from-green-600 to-blue-600 shadow-lg sticky top-0 z-50">
+		<div class="container mx-auto px-4">
+			<div class="flex justify-between items-center h-16">
+				<!-- Logo -->
+				<a href="/index" class="text-white font-bold text-2xl">🚌
+					GoReserve</a>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex space-x-6 items-center text-white font-semibold">
-          <a href="/index" class="hover:text-yellow-300 transition duration-300">Home</a>
-          <a href="#about" class="hover:text-yellow-300 transition duration-300">About Us</a>
+				<!-- Desktop Menu -->
+				<div
+					class="hidden md:flex space-x-6 items-center text-white font-semibold">
+					<a href="/index"
+						class="hover:text-yellow-300 transition duration-300">Home</a> <a
+						href="#about"
+						class="hover:text-yellow-300 transition duration-300">About Us</a>
 
-          <!-- Services Dropdown -->
-          <div class="relative group">
-            <button class="hover:text-yellow-300 transition duration-300">Services ⌄</button>
-            <div class="absolute hidden group-hover:block bg-white shadow-lg mt-2 py-2 rounded text-gray-700 w-48 z-50">
-              <a href="/book-ticket" class="block px-4 py-2 hover:bg-gray-100">Book Ticket</a>
-              <a href="/find-bus" class="block px-4 py-2 hover:bg-gray-100">Find Bus</a>
-              <a href="/booking-history" class="block px-4 py-2 hover:bg-gray-100">Booking History</a>
-            </div>
-          </div>
+					<!-- Alpine.js CDN -->
+					<script defer
+						src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-          <!-- Dynamic Login/Logout -->
-          <div th:if="${#authorization.expression('isAuthenticated()')}" class="flex items-center space-x-4">
-            <span class="text-yellow-200">👤 <span th:text="${#authentication.name}">Username</span></span>
-            <form th:action="@{/logout}" method="post">
-              <button type="submit" class="hover:text-yellow-300 transition duration-300">Logout</button>
-            </form>
-          </div>
+					<!-- Services Dropdown -->
+					<div x-data="{ open: false }" class="relative">
+						<button @click="open = !open" @click.away="open = false"
+							class="hover:text-yellow-300 transition duration-300">
+							Services ⌄</button>
 
-          <div th:unless="${#authorization.expression('isAuthenticated()')}">
-            <a href="/login" class="hover:text-yellow-300 transition duration-300">Login</a>
-          </div>
-        </div>
+						<div x-show="open" x-transition
+							class="absolute bg-white shadow-lg mt-2 py-2 rounded text-gray-700 w-48 z-50">
+							<a href="/book-ticket" class="block px-4 py-2 hover:bg-gray-100">Book
+								Ticket</a> <a href="/find-bus"
+								class="block px-4 py-2 hover:bg-gray-100">Find Bus</a> <a
+								href="/booking-history"
+								class="block px-4 py-2 hover:bg-gray-100">Booking History</a>
+						</div>
+					</div>
 
-        <!-- Mobile Menu -->
-        <div class="md:hidden text-white">
-          <details class="relative">
-            <summary class="cursor-pointer font-semibold">Menu ⌄</summary>
-            <div class="absolute bg-white text-gray-800 mt-2 shadow-lg rounded w-48 z-50">
-              <a href="/index" class="block px-4 py-2 hover:bg-gray-100">Home</a>
-              <a href="#about" class="block px-4 py-2 hover:bg-gray-100">About Us</a>
-              <a href="/book-ticket" class="block px-4 py-2 hover:bg-gray-100">Book Ticket</a>
-              <a href="/find-bus" class="block px-4 py-2 hover:bg-gray-100">Find Bus</a>
-              <a href="/booking-history" class="block px-4 py-2 hover:bg-gray-100">Booking History</a>
+					<!-- Dynamic Login/Logout -->
+					<div th:if="${#authorization.expression('isAuthenticated()')}"
+						class="flex items-center space-x-4">
+						<span class="text-yellow-200">👤 <span
+							th:text="${loggedInUserName}">Username</span></span>
 
-              <div th:if="${#authorization.expression('isAuthenticated()')}" class="border-t border-gray-200 mt-2">
-                <span class="block px-4 py-2 text-gray-700 font-medium">👤 <span th:text="${#authentication.name}">User</span></span>
-                <form th:action="@{/logout}" method="post">
-                  <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
-                </form>
-              </div>
-              <a th:unless="${#authorization.expression('isAuthenticated()')}" href="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
-            </div>
-          </details>
-        </div>
-      </div>
-    </div>
-  </nav>
+						<form th:action="@{/logout}" method="post">
+							<button type="submit"
+								class="hover:text-yellow-300 transition duration-300">Logout</button>
+						</form>
+					</div>
+
+					<div th:unless="${#authorization.expression('isAuthenticated()')}">
+						<a href="/login"
+							class="hover:text-yellow-300 transition duration-300">Login</a>
+					</div>
+				</div>
+
+				<!-- Mobile Menu -->
+				<div class="md:hidden text-white">
+					<details class="relative">
+						<summary class="cursor-pointer font-semibold">Menu ⌄</summary>
+						<div
+							class="absolute bg-white text-gray-800 mt-2 shadow-lg rounded w-48 z-50">
+							<a href="/index" class="block px-4 py-2 hover:bg-gray-100">Home</a>
+							<a href="#about" class="block px-4 py-2 hover:bg-gray-100">About
+								Us</a> <a href="/book-ticket"
+								class="block px-4 py-2 hover:bg-gray-100">Book Ticket</a> <a
+								href="/find-bus" class="block px-4 py-2 hover:bg-gray-100">Find
+								Bus</a> <a href="/booking-history"
+								class="block px-4 py-2 hover:bg-gray-100">Booking History</a>
+
+							<div th:if="${#authorization.expression('isAuthenticated()')}"
+								class="border-t border-gray-200 mt-2">
+								<span class="block px-4 py-2 text-gray-700 font-medium">👤
+									<span th:text="${#authentication.name}">User</span>
+								</span>
+								<form th:action="@{/logout}" method="post">
+									<button type="submit"
+										class="block w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+								</form>
+							</div>
+							<a th:unless="${#authorization.expression('isAuthenticated()')}"
+								href="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+						</div>
+					</details>
+				</div>
+			</div>
+		</div>
+	</nav>
 </div>

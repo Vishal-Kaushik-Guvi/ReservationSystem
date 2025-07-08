@@ -1,92 +1,107 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Register - Go-Reserve</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/register.css}" />
+  <meta charset="UTF-8">
+  <title>Register - GoReserve</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+    }
+
+    .toast {
+      animation: fadeInOut 3s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; bottom: -50px; }
+      10% { opacity: 1; bottom: 0; }
+      90% { opacity: 1; bottom: 0; }
+      100% { opacity: 0; bottom: -50px; }
+    }
+  </style>
 </head>
-<body>
-<div class="bg-overlay">
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <!-- <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" th:href="@{/}">Go-Reserve</a>
-        </div> -->
-    </nav>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div th:if="${param.success}" class="toast align-items-center text-white bg-danger border-0 show" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-               You have Successfully registered into Go-Reserve!!
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+<body class="bg-white">
+
+  <!-- ✅ Minimal Navbar -->
+  <div th:replace="fragments/navbar-minimal :: minimal-navbar"></div>
+
+  <!-- Main Content (Two Columns) -->
+  <div class="flex flex-col md:flex-row min-h-screen pt-10">
+
+    <!-- Left Panel: Registration Form -->
+    <div class="md:w-1/2 bg-gradient-to-br from-green-600 to-blue-600 text-white flex flex-col justify-center items-center p-8">
+      <div class="w-full max-w-md">
+
+        <h1 class="text-4xl font-bold mb-4 text-center">🚌 GoReserve</h1>
+        <h2 class="text-2xl font-semibold mb-6 text-center">Create your account</h2>
+
+        <!-- Toast for success -->
+        <div th:if="${param.success}" class="toast bg-yellow-400 text-gray-900 text-center py-3 px-4 mb-4 rounded shadow">
+          You have successfully registered into Go-Reserve!
         </div>
+
+        <form method="post" th:action="@{/register/save}" th:object="${user}">
+          <div class="mb-4">
+            <label for="firstName" class="block mb-1">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Enter first name"
+                   th:field="*{firstName}"
+                   class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 border border-white placeholder-white text-white focus:ring-2 focus:ring-yellow-300 focus:outline-none" />
+            <p th:errors="*{firstName}" class="text-yellow-300 text-sm mt-1"></p>
+          </div>
+
+          <div class="mb-4">
+            <label for="lastName" class="block mb-1">Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Enter last name"
+                   th:field="*{lastName}"
+                   class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 border border-white placeholder-white text-white focus:ring-2 focus:ring-yellow-300 focus:outline-none" />
+            <p th:errors="*{lastName}" class="text-yellow-300 text-sm mt-1"></p>
+          </div>
+
+          <div class="mb-4">
+            <label for="email" class="block mb-1">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter email"
+                   th:field="*{email}"
+                   class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 border border-white placeholder-white text-white focus:ring-2 focus:ring-yellow-300 focus:outline-none" />
+            <p th:errors="*{email}" class="text-yellow-300 text-sm mt-1"></p>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="block mb-1">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter password"
+                   th:field="*{password}"
+                   class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 border border-white placeholder-white text-white focus:ring-2 focus:ring-yellow-300 focus:outline-none" />
+            <p th:errors="*{password}" class="text-yellow-300 text-sm mt-1"></p>
+          </div>
+
+          <button type="submit"
+                  class="w-full bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-semibold py-2 rounded-lg transition duration-300">
+            Register
+          </button>
+        </form>
+
+        <p class="text-center mt-6 text-sm">
+          Already have an account?
+          <a th:href="@{/login}" class="text-yellow-300 hover:underline font-medium">Login here</a>
+        </p>
+
+      </div>
     </div>
-</div>
 
-
-    <div class="container">
-        <div class="col-md-6">
-            <!-- <div th:if="${param.success}">
-                <div class="alert alert-info text-center">You have successfully registered!</div>
-            </div> -->
-
-            <div class="card glass-card shadow-lg p-4">
-                <div class="card-header text-center bg-transparent border-0">
-                    <h2 class="text-white">Go-Reserve Register</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" role="form" th:action="@{/register/save}" th:object="${user}">
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label text-white">First Name</label>
-                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter first name" th:field="*{firstName}">
-                            <p th:errors="*{firstName}" class="text-danger" th:if="${#fields.hasErrors('firstName')}"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="lastName" class="form-label text-white">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter last name" th:field="*{lastName}">
-                            <p th:errors="*{lastName}" class="text-danger" th:if="${#fields.hasErrors('lastName')}"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label text-white">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address" th:field="*{email}">
-                            <p th:errors="*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label text-white">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" th:field="*{password}">
-                            <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}"></p>
-                        </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-primary w-100">Register</button>
-                        </div>
-                        <div class="text-center text-white">
-                            <span>Already registered? <a th:href="@{/login}" class="text-warning">Login here</a></span>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Right Panel: Bus Image -->
+    <div class="md:w-1/2 hidden md:block">
+      <img src="/images/loginGif.gif" alt="Bus Animation" class="w-full h-full object-cover" />
     </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-        var toastList = toastElList.map(function (toastEl) {
-            return new bootstrap.Toast(toastEl, { delay: 3000 });
-        });
-        toastList.forEach(toast => toast.show());
-    });
-</script>
+  </div>
 
 </body>
 </html>

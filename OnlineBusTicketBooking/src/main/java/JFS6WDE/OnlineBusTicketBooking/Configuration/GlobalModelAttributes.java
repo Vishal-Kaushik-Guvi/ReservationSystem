@@ -1,5 +1,6 @@
 package JFS6WDE.OnlineBusTicketBooking.Configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -11,7 +12,8 @@ import JFS6WDE.OnlineBusTicketBooking.Services.UserServiceImpl;
 
 @ControllerAdvice
 public class GlobalModelAttributes {
-
+	
+	@Autowired
     private final UserServiceImpl userService;
 
     public GlobalModelAttributes(UserServiceImpl userService) {
