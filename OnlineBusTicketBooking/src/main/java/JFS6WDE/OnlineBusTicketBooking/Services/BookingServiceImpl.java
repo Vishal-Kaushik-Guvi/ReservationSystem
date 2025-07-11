@@ -41,47 +41,51 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingHistory getBookingById(long id) {
-        return bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Booking not found with id: " + id));
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Booking not found with id: " + id));
     }
 
     @Override
     @Transactional
     public void saveBooking(BookingDto bookingDto, String userEmail, long id) {
         User user = userRepository.findByEmail(userEmail);
-    
+
         Bus bus = busRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bus not found with ID: " + bookingDto.getId()));
-    
-        // Check if the requested number of seats is available
+                .orElseThrow(() -> new RuntimeException("Bus not found with ID: " + id));
+
         int availableSeats = bus.getSeats() - bus.getBookingHistoryList().stream()
                 .mapToInt(BookingHistory::getBookseat)
                 .sum();
-    
+
         if (bookingDto.getBookseat() > availableSeats) {
-            throw new RuntimeException("Not enough seats available. Requested: " + bookingDto.getBookseat() + ", Available: " + availableSeats);
+            throw new RuntimeException("Not enough seats available. Requested: " +
+                    bookingDto.getBookseat() + ", Available: " + availableSeats);
         }
 
-        List<BookingHistory> existingBookings = bookingRepository.findByUserAndBus(user, bus);
-        if (!existingBookings.isEmpty()) {
-            throw new IllegalArgumentException("Booking already exists for this user and bus.");
+        if (bookingDto.getPassengerNames().size() != bookingDto.getBookseat()
+                || bookingDto.getPassengerAges().size() != bookingDto.getBookseat()) {
+            throw new RuntimeException("Passenger details do not match the number of seats booked.");
         }
-    
+
         BookingHistory bookingHistory = new BookingHistory();
-        
         bookingHistory.setUser(user);
         bookingHistory.setBus(bus);
         bookingHistory.setRouteFrom(bus.getRouteFrom());
         bookingHistory.setRouteTo(bus.getRouteTo());
         bookingHistory.setDistance(bus.getDistance());
-        bookingHistory.setFare(bus.getFare()*bookingDto.getBookseat());
-
         bookingHistory.setBookseat(bookingDto.getBookseat());
+        bookingHistory.setFare(bus.getFare() * bookingDto.getBookseat());
+        bookingHistory.setMobileNumber(bookingDto.getMobileNumber());
+
         bookingHistory.setCardNumber(bookingDto.getCardNumber());
         bookingHistory.setUpiId(bookingDto.getUpiId());
 
+        bookingHistory.setPassengerNames(bookingDto.getPassengerNames());
+        bookingHistory.setPassengerAges(bookingDto.getPassengerAges());
+
         bookingHistory.setBookingDate(LocalDate.now());
         bookingHistory.setBookingTime(LocalTime.now());
-    
+
         bookingRepository.save(bookingHistory);
     }
 }

@@ -18,6 +18,14 @@ import java.util.Optional;
 public class BusServiceImpl implements BusService {
     @Autowired
     private BusRepository busRepo;
+    
+    
+    @Override
+    public Bus getBusById(long id) {
+        return busRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Bus not found with id: " + id));
+    }
+
 
     // Admin methods
     @Override

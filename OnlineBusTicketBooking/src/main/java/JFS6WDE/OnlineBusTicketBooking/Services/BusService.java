@@ -9,6 +9,9 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 public interface BusService {
+	
+	Bus getBusById(long id);
+	
     Bus createBus(Bus bus) throws ResourceNotFound, AdminException;
 
     Bus updateBus(Bus bus) throws ResourceNotFound;

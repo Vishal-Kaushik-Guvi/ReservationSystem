@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
 import JFS6WDE.OnlineBusTicketBooking.Entities.BookingHistory;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Bus;
 import JFS6WDE.OnlineBusTicketBooking.Services.BookingServiceImpl;
+import JFS6WDE.OnlineBusTicketBooking.Services.BusServiceImpl;
 import jakarta.validation.Valid;
 
 @Controller
@@ -21,6 +23,9 @@ public class BookingController {
 
     @Autowired
     private BookingServiceImpl bookingService;
+
+    @Autowired
+    private BusServiceImpl busService;
 
     // Display all booking history entries
     @GetMapping("/viewBookingHistory")
@@ -48,7 +53,8 @@ public class BookingController {
     // Show add booking form
     @GetMapping("/addBooking")
     public String showAddBookingForm(@RequestParam long busId, Model model) {
-        model.addAttribute("busId", busId);
+        Bus bus = busService.getBusById(busId);
+        model.addAttribute("bus", bus);
         model.addAttribute("bookingDto", new BookingDto());
         return "addbooking"; // Thymeleaf template name for adding booking
     }
@@ -63,8 +69,9 @@ public class BookingController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            Bus bus = busService.getBusById(busId);
+            model.addAttribute("bus", bus);
             model.addAttribute("bookingDto", bookingDto);
-            model.addAttribute("busId", busId);
             return "addbooking"; // Return to form with validation errors
         }
 

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -44,5 +45,17 @@ public class BookingHistory {
 
     private LocalDate bookingDate;
     private LocalTime bookingTime;
+    
+    @ElementCollection
+    @CollectionTable(name = "booking_passenger_names", joinColumns = @JoinColumn(name = "booking_id"))
+    @Column(name = "passenger_name")
+    private List<String> passengerNames;
+
+    @ElementCollection
+    @CollectionTable(name = "booking_passenger_ages", joinColumns = @JoinColumn(name = "booking_id"))
+    @Column(name = "passenger_age")
+    private List<Integer> passengerAges;
+
+    private String mobileNumber;
     
 }

@@ -2,52 +2,98 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title th:text="${pageTitle} ?: 'Add Booking'">Add Booking</title>
-
-  <!-- Tailwind CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen">
 
-  <!-- Layout Fragments -->
-  <div th:replace="fragments/navbar :: navbar"></div>
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar"></div>
 
-  <div th:fragment="content">
-    <div class="max-w-2xl mx-auto bg-white rounded shadow p-8 mt-10">
-      <h2 class="text-3xl font-bold text-center text-green-600 mb-6">Add Booking</h2>
+<!-- Booking Form -->
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+  <h2 class="text-3xl font-bold text-center text-green-700 mb-6">Confirm Your Booking</h2>
 
-      <form th:action="@{/bookings/addBooking}" method="post" th:object="${bookingDto}">
-        <input type="hidden" name="busId" th:value="${busId}" />
-
-        <!-- Optional Summary Info -->
-        <div class="mb-4 text-sm text-gray-700">
-          <p><strong>Bus:</strong> <span th:text="${busName}">Bus Name</span></p>
-          <p><strong>Route:</strong> <span th:text="${routeFrom}">From</span> to <span th:text="${routeTo}">To</span></p>
-          <p><strong>Journey Date:</strong> <span th:text="${journeyDate}">YYYY-MM-DD</span></p>
-        </div>
-
-        <div class="mb-4">
-          <label for="bookseat" class="block font-semibold text-gray-800">Number of Seats</label>
-          <input type="number" class="form-control w-full p-2 border border-gray-300 rounded" id="bookseat" th:field="*{bookseat}" required />
-        </div>
-
-        <div class="mt-6 text-center">
-          <button type="submit"
-            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow">
-            Confirm Booking
-          </button>
-        </div>
-      </form>
-
-      <div class="mt-6 text-center">
-        <a th:href="@{/bookings/payment(bookingId=${bookingId})}"
-           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded shadow">
-          Make Payment
-        </a>
-      </div>
-    </div>
+  <!-- Bus Info -->
+  <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6 text-gray-700 text-sm">
+    <p><strong>🚌 Bus:</strong> <span th:text="${bus.busName}">Bus Name</span></p>
+    <p><strong>📍 Route:</strong> <span th:text="${bus.routeFrom}">From</span> → <span th:text="${bus.routeTo}">To</span></p>
+    <p><strong>🗓️ Date:</strong> <span th:text="${bus.busJourneyDate}">Journey Date</span></p>
+    <p><strong>🕒 Departure:</strong> <span th:text="${bus.departureTime}">Departure Time</span></p>
+    <p><strong>🕒 Arrival:</strong> <span th:text="${bus.arrivalTime}">Arrival Time</span></p>
+    <p><strong>🎫 Fare per Seat:</strong> ₹<span th:text="${bus.fare}">Fare</span></p>
+    <p><strong>🪑 Available Seats:</strong> <span th:text="${bus.seats}">Seats</span></p>
   </div>
+
+  <!-- Booking Form -->
+  <form th:action="@{/bookings/addBooking}" method="post" th:object="${bookingDto}">
+    <input type="hidden" name="busId" th:value="${bus.busId}" />
+
+    <!-- Booker Mobile -->
+    <div class="mb-4">
+      <label for="mobile" class="block text-gray-800 font-semibold mb-1">📞 Mobile Number</label>
+      <input type="tel" id="mobile" th:field="*{mobileNumber}" required
+             class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500" />
+    </div>
+
+    <!-- Number of Seats -->
+    <div class="mb-6">
+      <label for="bookseat" class="block text-gray-800 font-semibold mb-1">🎟️ Number of Seats</label>
+      <input type="number" id="bookseat" th:field="*{bookseat}" min="1" max="10"
+             oninput="generatePassengerFields(this.value)" required
+             class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500" />
+    </div>
+
+    <!-- Dynamic Passenger Fields -->
+    <div id="passengerDetailsContainer" class="space-y-4 mb-6"></div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+      <button type="submit"
+              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow">
+        ✅ Confirm Booking
+      </button>
+    </div>
+  </form>
+
+  <!-- Payment Button -->
+  <div class="mt-6 text-center">
+    <a th:href="@{/bookings/payment(bookingId=${bookingId})}"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow">
+      💳 Make Payment
+    </a>
+  </div>
+</div>
+
+<!-- JavaScript to Create Passenger Fields -->
+<script>
+  function generatePassengerFields(seatCount) {
+    const container = document.getElementById("passengerDetailsContainer");
+    container.innerHTML = '';
+
+    for (let i = 1; i <= seatCount; i++) {
+      const group = document.createElement('div');
+      group.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
+
+      group.innerHTML = `
+        <div>
+          <label class="block text-gray-800 font-medium mb-1">👤 Passenger ${i} Name</label>
+          <input type="text" name="passengerNames" required
+                 placeholder="Passenger ${i} Name"
+                 class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-gray-800 font-medium mb-1">🎂 Passenger ${i} Age</label>
+          <input type="number" name="passengerAges" required min="1" max="120"
+                 placeholder="Age"
+                 class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
+        </div>
+      `;
+      container.appendChild(group);
+    }
+  }
+</script>
 
 </body>
 </html>
