@@ -47,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void saveBooking(BookingDto bookingDto, String userEmail, long id) {
+    public Long saveBooking(BookingDto bookingDto, String userEmail, long id) {
         User user = userRepository.findByEmail(userEmail);
 
         Bus bus = busRepository.findById(id)
@@ -77,9 +77,6 @@ public class BookingServiceImpl implements BookingService {
         bookingHistory.setFare(bus.getFare() * bookingDto.getBookseat());
         bookingHistory.setMobileNumber(bookingDto.getMobileNumber());
 
-        bookingHistory.setCardNumber(bookingDto.getCardNumber());
-        bookingHistory.setUpiId(bookingDto.getUpiId());
-
         bookingHistory.setPassengerNames(bookingDto.getPassengerNames());
         bookingHistory.setPassengerAges(bookingDto.getPassengerAges());
 
@@ -87,5 +84,11 @@ public class BookingServiceImpl implements BookingService {
         bookingHistory.setBookingTime(LocalTime.now());
 
         bookingRepository.save(bookingHistory);
+        return bookingHistory.getId();
     }
+    
+    public void saveUpdatedBooking(BookingHistory booking) {
+        bookingRepository.save(booking);
+    }
+
 }

@@ -76,7 +76,7 @@ public class BookingController {
         }
 
         String email = currentUser.getUsername();
-        bookingService.saveBooking(bookingDto, email, busId);
-        return "redirect:/bookings/viewBookingHistory"; // Redirect to the booking history list page
+        Long bookingId = bookingService.saveBooking(bookingDto, email, busId);
+        return "redirect:/bookings/payment?bookingId=" + bookingId;
     }
 }

@@ -1,14 +1,13 @@
 package JFS6WDE.OnlineBusTicketBooking.Services;
 
+
 import JFS6WDE.OnlineBusTicketBooking.Entities.Bus;
 import JFS6WDE.OnlineBusTicketBooking.Exception.AdminException;
 import JFS6WDE.OnlineBusTicketBooking.Exception.ResourceNotFound;
 import JFS6WDE.OnlineBusTicketBooking.Repository.BusRepository;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -96,12 +95,14 @@ public class BusServiceImpl implements BusService {
         return busListType;
     }
 
-    @Override
-	public Page<Bus> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
-		// check if the sorting is ascending or descending
-		Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
-				: Sort.by(sortField).descending();
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-		return busRepo.findAll(pageable);
-	}
+//    @Override
+//	public Page<Bus> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+//		// check if the sorting is ascending or descending
+//		Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
+//				: Sort.by(sortField).descending();
+//		Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+//		return busRepo.findAll(pageable);
+//	}
+    
+
 }

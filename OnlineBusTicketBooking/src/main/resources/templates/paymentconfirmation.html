@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Successful</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center">
+
+<div class="bg-white shadow-lg rounded-xl p-10 text-center">
+  <h1 class="text-3xl font-bold text-green-700 mb-4">🎉 Payment Successful!</h1>
+  <p class="text-gray-700 mb-4">Thank you for booking with <strong>GoReserve</strong>.</p>
+  <p class="text-sm text-gray-600">Booking ID: <span th:text="${booking.id}">101</span></p>
+  <p class="text-sm text-gray-600">Bus: <span th:text="${booking.bus.busName}">Bus Name</span></p>
+  <p class="text-sm text-gray-600">Journey Date: <span th:text="${booking.bus.busJourneyDate}">Date</span></p>
+
+  <div class="mt-6">
+    <a href="/" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow">
+      🏠 Go to Home
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

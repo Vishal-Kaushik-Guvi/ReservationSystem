@@ -20,14 +20,14 @@
     <p><strong>🚌 Bus:</strong> <span th:text="${bus.busName}">Bus Name</span></p>
     <p><strong>📍 Route:</strong> <span th:text="${bus.routeFrom}">From</span> → <span th:text="${bus.routeTo}">To</span></p>
     <p><strong>🗓️ Date:</strong> <span th:text="${bus.busJourneyDate}">Journey Date</span></p>
-    <p><strong>🕒 Departure:</strong> <span th:text="${bus.departureTime}">Departure Time</span></p>
-    <p><strong>🕒 Arrival:</strong> <span th:text="${bus.arrivalTime}">Arrival Time</span></p>
+    <p><strong>🕒 Departure:</strong> <span th:text="${bus.departureTime}">Departure</span></p>
+    <p><strong>🕒 Arrival:</strong> <span th:text="${bus.arrivalTime}">Arrival</span></p>
     <p><strong>🎫 Fare per Seat:</strong> ₹<span th:text="${bus.fare}">Fare</span></p>
     <p><strong>🪑 Available Seats:</strong> <span th:text="${bus.seats}">Seats</span></p>
   </div>
 
   <!-- Booking Form -->
-  <form th:action="@{/bookings/addBooking}" method="post" th:object="${bookingDto}">
+  <form th:action="@{/bookings/payment}" method="post" th:object="${bookingDto}">
     <input type="hidden" name="busId" th:value="${bus.busId}" />
 
     <!-- Booker Mobile -->
@@ -39,38 +39,32 @@
 
     <!-- Number of Seats -->
     <div class="mb-6">
-      <label for="bookseat" class="block text-gray-800 font-semibold mb-1">🎟️ Number of Seats</label>
-      <input type="number" id="bookseat" th:field="*{bookseat}" min="1" max="10"
+      <label for="bookseat" class="block text-gray-800 font-semibold mb-1">🎟️ Number of Seats (Max 5)</label>
+      <input type="number" id="bookseat" th:field="*{bookseat}" min="1" max="5"
              oninput="generatePassengerFields(this.value)" required
              class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500" />
     </div>
 
-    <!-- Dynamic Passenger Fields -->
+    <!-- Passenger Details -->
     <div id="passengerDetailsContainer" class="space-y-4 mb-6"></div>
 
-    <!-- Submit Button -->
+    <!-- Submit -->
     <div class="text-center">
       <button type="submit"
               class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow">
-        ✅ Confirm Booking
+        ✅ Confirm Booking & Proceed to Payment
       </button>
     </div>
   </form>
-
-  <!-- Payment Button -->
-  <div class="mt-6 text-center">
-    <a th:href="@{/bookings/payment(bookingId=${bookingId})}"
-       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow">
-      💳 Make Payment
-    </a>
-  </div>
 </div>
 
-<!-- JavaScript to Create Passenger Fields -->
+<!-- JS to Generate Passenger Fields -->
 <script>
   function generatePassengerFields(seatCount) {
     const container = document.getElementById("passengerDetailsContainer");
     container.innerHTML = '';
+
+    seatCount = Math.min(seatCount, 5); // Force max limit on front-end too
 
     for (let i = 1; i <= seatCount; i++) {
       const group = document.createElement('div');

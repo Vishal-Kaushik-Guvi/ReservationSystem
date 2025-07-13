@@ -12,5 +12,5 @@ public interface BookingService {
     BookingHistory getBookingById(long id);
 
     // main functionality
-    void saveBooking(BookingDto bookingDto, String userEmail, long id);
+    Long saveBooking(BookingDto bookingDto, String userEmail, long id);
 }
