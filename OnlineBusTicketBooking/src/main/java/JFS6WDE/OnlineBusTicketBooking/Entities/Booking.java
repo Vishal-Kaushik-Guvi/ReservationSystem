@@ -14,9 +14,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingHistory {
+public class Booking {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -37,7 +38,7 @@ public class BookingHistory {
 
     private LocalDate bookingDate;
     private LocalTime bookingTime;
-    
+
     @ElementCollection
     @CollectionTable(name = "booking_passenger_names", joinColumns = @JoinColumn(name = "booking_id"))
     @Column(name = "passenger_name")
@@ -49,7 +50,7 @@ public class BookingHistory {
     private List<Integer> passengerAges;
 
     private String mobileNumber;
-    
+
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     private Payment payment;
     

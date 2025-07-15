@@ -1,6 +1,7 @@
 package JFS6WDE.OnlineBusTicketBooking.Services;
 
 import java.time.LocalDate;
+
 import java.time.LocalTime;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
-import JFS6WDE.OnlineBusTicketBooking.Entities.BookingHistory;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Bus;
 import JFS6WDE.OnlineBusTicketBooking.Entities.User;
 import JFS6WDE.OnlineBusTicketBooking.Exception.ResourceNotFound;
@@ -30,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
     private BusRepository busRepository;
 
     @Override
-    public List<BookingHistory> getAllBooking() {
+    public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
 
@@ -40,21 +41,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingHistory getBookingById(long id) {
+    public Booking getBookingById(long id) {
         return bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Booking not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + id));
     }
 
     @Override
     @Transactional
-    public Long saveBooking(BookingDto bookingDto, String userEmail, long id) {
+    public Long saveBooking(BookingDto bookingDto, String userEmail, long busId) {
         User user = userRepository.findByEmail(userEmail);
+        Bus bus = busRepository.findById(busId)
+                .orElseThrow(() -> new RuntimeException("Bus not found with ID: " + busId));
 
-        Bus bus = busRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bus not found with ID: " + id));
-
-        int availableSeats = bus.getSeats() - bus.getBookingHistoryList().stream()
-                .mapToInt(BookingHistory::getBookseat)
+        int availableSeats = bus.getSeats() - bus.getBookings().stream()
+                .mapToInt(Booking::getBookseat)
                 .sum();
 
         if (bookingDto.getBookseat() > availableSeats) {
@@ -64,31 +64,30 @@ public class BookingServiceImpl implements BookingService {
 
         if (bookingDto.getPassengerNames().size() != bookingDto.getBookseat()
                 || bookingDto.getPassengerAges().size() != bookingDto.getBookseat()) {
-            throw new RuntimeException("Passenger details do not match the number of seats booked.");
+            throw new RuntimeException("Passenger details do not match number of seats.");
         }
 
-        BookingHistory bookingHistory = new BookingHistory();
-        bookingHistory.setUser(user);
-        bookingHistory.setBus(bus);
-        bookingHistory.setRouteFrom(bus.getRouteFrom());
-        bookingHistory.setRouteTo(bus.getRouteTo());
-        bookingHistory.setDistance(bus.getDistance());
-        bookingHistory.setBookseat(bookingDto.getBookseat());
-        bookingHistory.setFare(bus.getFare() * bookingDto.getBookseat());
-        bookingHistory.setMobileNumber(bookingDto.getMobileNumber());
+        Booking booking = new Booking();
+        booking.setUser(user);
+        booking.setBus(bus);
+        booking.setRouteFrom(bus.getRouteFrom());
+        booking.setRouteTo(bus.getRouteTo());
+        booking.setDistance(bus.getDistance());
+        booking.setFare(bus.getFare() * bookingDto.getBookseat());
+        booking.setBookseat(bookingDto.getBookseat());
+        booking.setBookingDate(LocalDate.now());
+        booking.setBookingTime(LocalTime.now());
+        booking.setMobileNumber(bookingDto.getMobileNumber());
+        booking.setPassengerNames(bookingDto.getPassengerNames());
+        booking.setPassengerAges(bookingDto.getPassengerAges());
 
-        bookingHistory.setPassengerNames(bookingDto.getPassengerNames());
-        bookingHistory.setPassengerAges(bookingDto.getPassengerAges());
-
-        bookingHistory.setBookingDate(LocalDate.now());
-        bookingHistory.setBookingTime(LocalTime.now());
-
-        bookingRepository.save(bookingHistory);
-        return bookingHistory.getId();
+        bookingRepository.save(booking);
+        return booking.getId();
     }
     
-    public void saveUpdatedBooking(BookingHistory booking) {
-        bookingRepository.save(booking);
+    @Override
+    public void updateBookingWithPayment(Booking booking) {
+        bookingRepository.save(booking); // Cascade will save the Payment
     }
 
 }

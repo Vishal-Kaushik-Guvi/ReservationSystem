@@ -18,7 +18,7 @@ import org.springframework.validation.BindingResult;
 
 import JFS6WDE.OnlineBusTicketBooking.Controller.BookingController;
 import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
-import JFS6WDE.OnlineBusTicketBooking.Entities.BookingHistory;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 import JFS6WDE.OnlineBusTicketBooking.Services.BookingServiceImpl;
 
 public class BookingControllerTest {
@@ -63,7 +63,7 @@ public class BookingControllerTest {
 
     @Test
     public void testFindBookingById() {
-        BookingHistory booking = new BookingHistory();
+        Booking booking = new Booking();
         when(bookingService.getBookingById(anyLong())).thenReturn(booking);
         
         String viewName = bookingController.findBookingById(1L, model);

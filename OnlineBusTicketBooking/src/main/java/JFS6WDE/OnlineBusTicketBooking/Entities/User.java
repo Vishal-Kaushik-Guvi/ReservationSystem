@@ -40,5 +40,5 @@ public class User
     private List<Role> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<BookingHistory> bookingHistoryList = new ArrayList<>();
+    private List<Booking> bookings = new ArrayList<>();
 }

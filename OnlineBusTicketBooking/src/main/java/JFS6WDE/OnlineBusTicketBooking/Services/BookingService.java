@@ -3,14 +3,18 @@ package JFS6WDE.OnlineBusTicketBooking.Services;
 import java.util.List;
 
 import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
-import JFS6WDE.OnlineBusTicketBooking.Entities.BookingHistory;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 
 public interface BookingService {
 
-    List<BookingHistory> getAllBooking();
-    void deleteBookingById(long id);
-    BookingHistory getBookingById(long id);
+	 List<Booking> getAllBookings(); // renamed for plural consistency
 
-    // main functionality
-    Long saveBooking(BookingDto bookingDto, String userEmail, long id);
+	    void deleteBookingById(long id);
+
+	    Booking getBookingById(long id);
+
+	    // Save a new booking and return its ID
+	    Long saveBooking(BookingDto bookingDto, String userEmail, long busId);
+	    
+	    void updateBookingWithPayment(Booking booking);
 }

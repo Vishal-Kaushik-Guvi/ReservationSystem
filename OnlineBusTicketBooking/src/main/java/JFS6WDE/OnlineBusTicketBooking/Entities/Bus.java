@@ -1,43 +1,47 @@
 package JFS6WDE.OnlineBusTicketBooking.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "bookingHistoryList") // Prevent recursion
 public class Bus {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long busId;
 
-    @NotBlank(message = "Bus name can't be null/blank, Please provide a valid name first!")
+    @NotBlank(message = "Bus name can't be blank")
+    @Size(max = 50, message = "Bus name must be under 50 characters")
     private String busName;
 
-    @NotBlank(message = "Driver name can't be null/blank, Please provide a valid name first!")
+    @NotBlank(message = "Driver name can't be blank")
+    @Size(max = 50, message = "Driver name must be under 50 characters")
     private String driverName;
 
-    @NotBlank(message = "Bus Type can't be null/blank, Please provide a valid bus type")
-    //deulex or Normal
-    private String busType;
+    @NotBlank(message = "Bus type can't be blank")
+    @Size(max = 30, message = "Bus type must be under 30 characters")
+    private String busType; // e.g., Deluxe, Normal
 
-    @NotBlank(message = "Choose a valid starting point.")
+    @NotBlank(message = "Route From can't be blank")
+    @Size(max = 50)
     private String routeFrom;
 
-    @NotBlank(message = "Choose a valid destination.")
+    @NotBlank(message = "Route To can't be blank")
+    @Size(max = 50)
     private String routeTo;
 
-    @NotNull(message = "Bus Journey Date can't be null, Please provide correct date")
+    @NotNull(message = "Journey date is required")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate busJourneyDate;
 
@@ -47,14 +51,16 @@ public class Bus {
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private LocalTime departureTime;
 
-    @Column(name = "total_seats")
+    @Min(value = 1, message = "At least 1 seat is required")
+    @NotNull(message = "Total seats must be specified")
     private Integer seats;
 
+    @Min(value = 1, message = "Distance must be at least 1 km")
     private int distance;
-    
+
+    @Min(value = 0, message = "Fare must be non-negative")
     private Integer fare;
 
-@OneToMany(mappedBy = "bus", cascade = CascadeType.ALL)
-private List<BookingHistory> bookingHistoryList = new ArrayList<>();
-
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Booking> bookings = new ArrayList<>();
 }

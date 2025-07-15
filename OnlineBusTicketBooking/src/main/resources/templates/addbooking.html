@@ -27,7 +27,8 @@
   </div>
 
   <!-- Booking Form -->
-  <form th:action="@{/bookings/payment}" method="post" th:object="${bookingDto}">
+  <form th:action="@{/bookings/addBooking(busId=${bus.busId})}" method="post" th:object="${bookingDto}">
+
     <input type="hidden" name="busId" th:value="${bus.busId}" />
 
     <!-- Booker Mobile -->

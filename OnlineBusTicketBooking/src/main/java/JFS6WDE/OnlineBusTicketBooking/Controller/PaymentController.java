@@ -1,7 +1,7 @@
 package JFS6WDE.OnlineBusTicketBooking.Controller;
 
 import JFS6WDE.OnlineBusTicketBooking.Dto.PaymentDto;
-import JFS6WDE.OnlineBusTicketBooking.Entities.BookingHistory;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Payment;
 import JFS6WDE.OnlineBusTicketBooking.Services.BookingServiceImpl;
 
@@ -18,18 +18,19 @@ public class PaymentController {
     private BookingServiceImpl bookingService;
 
     @GetMapping("/payment")
-    public String showPaymentForm(@RequestParam Long bookingId, Model model) {
-        BookingHistory booking = bookingService.getBookingById(bookingId);
+    public String showPaymentForm(@RequestParam("bookingId") Long bookingId, Model model) {
+        Booking booking = bookingService.getBookingById(bookingId);
         model.addAttribute("booking", booking);
         model.addAttribute("paymentDto", new PaymentDto());
         return "payment";
     }
 
+
     @PostMapping("/payment")
     public String processPayment(@RequestParam Long bookingId,
                                  @ModelAttribute PaymentDto paymentDto,
                                  Model model) {
-        BookingHistory booking = bookingService.getBookingById(bookingId);
+        Booking booking = bookingService.getBookingById(bookingId);
         if (booking == null) {
             model.addAttribute("error", "Booking not found.");
             return "payment";
@@ -42,7 +43,7 @@ public class PaymentController {
         payment.setBooking(booking);
 
         booking.setPayment(payment); // Maintain bi-directional consistency
-        bookingService.saveUpdatedBooking(booking); // should cascade to save Payment
+        bookingService.updateBookingWithPayment(booking); // should cascade to save Payment
 
         model.addAttribute("booking", booking);
         return "paymentconfirmation";
