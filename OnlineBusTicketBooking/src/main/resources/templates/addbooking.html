@@ -6,88 +6,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen">
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen text-[17px]">
 
 <!-- Navbar -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <!-- Booking Form -->
-<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
-  <h2 class="text-3xl font-bold text-center text-green-700 mb-6">Confirm Your Booking</h2>
+<div class="max-w-5xl mx-auto mt-10 bg-white shadow-2xl rounded-2xl p-10">
+  <h2 class="text-4xl font-bold text-center text-green-700 mb-8">Confirm Your Booking</h2>
 
   <!-- Bus Info -->
-  <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6 text-gray-700 text-sm">
+  <div class="bg-blue-50 border border-blue-200 rounded p-5 mb-8 text-gray-800 text-base">
     <p><strong>🚌 Bus:</strong> <span th:text="${bus.busName}">Bus Name</span></p>
     <p><strong>📍 Route:</strong> <span th:text="${bus.routeFrom}">From</span> → <span th:text="${bus.routeTo}">To</span></p>
     <p><strong>🗓️ Date:</strong> <span th:text="${bus.busJourneyDate}">Journey Date</span></p>
     <p><strong>🕒 Departure:</strong> <span th:text="${bus.departureTime}">Departure</span></p>
     <p><strong>🕒 Arrival:</strong> <span th:text="${bus.arrivalTime}">Arrival</span></p>
     <p><strong>🎫 Fare per Seat:</strong> ₹<span th:text="${bus.fare}">Fare</span></p>
-    <p><strong>🪑 Available Seats:</strong> <span th:text="${bus.seats}">Seats</span></p>
+    <p><strong>🪑 Available Seats:</strong> <span id="availableSeats" th:text="${bus.seats}">Seats</span></p>
   </div>
 
   <!-- Booking Form -->
-  <form th:action="@{/bookings/addBooking(busId=${bus.busId})}" method="post" th:object="${bookingDto}">
-
+  <form th:action="@{/bookings/addBooking(busId=${bus.busId})}" method="post" th:object="${bookingDto}" onsubmit="return validateSeatCount()">
     <input type="hidden" name="busId" th:value="${bus.busId}" />
 
-    <!-- Booker Mobile -->
-    <div class="mb-4">
-      <label for="mobile" class="block text-gray-800 font-semibold mb-1">📞 Mobile Number</label>
-      <input type="tel" id="mobile" th:field="*{mobileNumber}" required
-             class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500" />
+    <!-- Mobile Number -->
+    <div class="mb-6">
+      <label for="mobile" class="block text-gray-800 font-semibold mb-2">📞 Mobile Number</label>
+      <input type="tel" id="mobile" th:field="*{mobileNumber}" required pattern="[0-9]{10}" maxlength="10"
+             placeholder="Enter 10-digit number"
+             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-lg" />
+      <p class="text-sm text-gray-500 mt-1">Must be exactly 10 digits</p>
     </div>
 
-    <!-- Number of Seats -->
-    <div class="mb-6">
-      <label for="bookseat" class="block text-gray-800 font-semibold mb-1">🎟️ Number of Seats (Max 5)</label>
-      <input type="number" id="bookseat" th:field="*{bookseat}" min="1" max="5"
-             oninput="generatePassengerFields(this.value)" required
-             class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500" />
-    </div>
+<!-- Seat Count -->
+<div class="mb-6">
+  <label for="bookseat" class="block text-gray-800 font-semibold mb-2">🎟️ Number of Seats</label>
+  <input type="number" id="bookseat" th:field="*{bookseat}" min="1"
+         oninput="generatePassengerFields(this.value)" required
+         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-lg" />
+  <p id="seatError" class="text-red-600 mt-1 hidden">❌ Requested seats exceed available.</p>
+</div>
 
     <!-- Passenger Details -->
-    <div id="passengerDetailsContainer" class="space-y-4 mb-6"></div>
+    <div id="passengerDetailsContainer" class="space-y-5 mb-6"></div>
 
     <!-- Submit -->
-    <div class="text-center">
+    <div class="text-center mt-8">
       <button type="submit"
-              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow">
+              class="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-lg shadow-lg transition duration-200">
         ✅ Confirm Booking & Proceed to Payment
       </button>
     </div>
   </form>
 </div>
 
-<!-- JS to Generate Passenger Fields -->
+<!-- JS -->
 <script>
-  function generatePassengerFields(seatCount) {
-    const container = document.getElementById("passengerDetailsContainer");
-    container.innerHTML = '';
+function generatePassengerFields(seatCount) {
+	  const available = parseInt(document.getElementById("availableSeats").innerText);
+	  const error = document.getElementById("seatError");
+	  const container = document.getElementById("passengerDetailsContainer");
 
-    seatCount = Math.min(seatCount, 5); // Force max limit on front-end too
+	  if (seatCount > available) {
+	    error.classList.remove("hidden");
+	    container.innerHTML = "";
+	    return;
+	  } else {
+	    error.classList.add("hidden");
+	  }
 
-    for (let i = 1; i <= seatCount; i++) {
-      const group = document.createElement('div');
-      group.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
+	  container.innerHTML = '';
+	  for (let i = 1; i <= seatCount; i++) {
+	    const group = document.createElement('div');
+	    group.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
 
-      group.innerHTML = `
-        <div>
-          <label class="block text-gray-800 font-medium mb-1">👤 Passenger ${i} Name</label>
-          <input type="text" name="passengerNames" required
-                 placeholder="Passenger ${i} Name"
-                 class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label class="block text-gray-800 font-medium mb-1">🎂 Passenger ${i} Age</label>
-          <input type="number" name="passengerAges" required min="1" max="120"
-                 placeholder="Age"
-                 class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
-        </div>
-      `;
-      container.appendChild(group);
-    }
-  }
+	    group.innerHTML = `
+	      <div>
+	        <label class="block text-gray-800 font-medium mb-1">👤 Passenger ${i} Name</label>
+	        <input type="text" name="passengerNames" required
+	               placeholder="Passenger ${i} Name"
+	               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+	      </div>
+	      <div>
+	        <label class="block text-gray-800 font-medium mb-1">🎂 Passenger ${i} Age</label>
+	        <input type="number" name="passengerAges" required min="18" max="100"
+	               placeholder="Age (18 - 100)"
+	               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+	      </div>
+	    `;
+	    container.appendChild(group);
+	  }
+	}
+
+	function validateSeatCount() {
+	  const seatInput = document.getElementById("bookseat");
+	  const available = parseInt(document.getElementById("availableSeats").innerText);
+	  const requested = parseInt(seatInput.value);
+	  const error = document.getElementById("seatError");
+
+	  if (requested > available || requested <= 0) {
+	    error.classList.remove("hidden");
+	    return false;
+	  }
+	  return true;
+	}
 </script>
 
 </body>

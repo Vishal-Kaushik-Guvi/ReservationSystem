@@ -25,9 +25,8 @@ public class PaymentController {
         return "payment";
     }
 
-
     @PostMapping("/payment")
-    public String processPayment(@RequestParam Long bookingId,
+    public String processPayment(@RequestParam("bookingId") Long bookingId,
                                  @ModelAttribute PaymentDto paymentDto,
                                  Model model) {
         Booking booking = bookingService.getBookingById(bookingId);
@@ -48,6 +47,5 @@ public class PaymentController {
         model.addAttribute("booking", booking);
         return "paymentconfirmation";
     }
-
     
 }

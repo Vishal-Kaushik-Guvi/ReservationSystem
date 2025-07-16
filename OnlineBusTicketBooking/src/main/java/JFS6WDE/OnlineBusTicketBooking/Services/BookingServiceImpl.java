@@ -12,7 +12,6 @@ import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Bus;
 import JFS6WDE.OnlineBusTicketBooking.Entities.User;
-import JFS6WDE.OnlineBusTicketBooking.Exception.ResourceNotFound;
 import JFS6WDE.OnlineBusTicketBooking.Repository.BookingRepository;
 import JFS6WDE.OnlineBusTicketBooking.Repository.BusRepository;
 import JFS6WDE.OnlineBusTicketBooking.Repository.UserRepository;
@@ -88,6 +87,31 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void updateBookingWithPayment(Booking booking) {
         bookingRepository.save(booking); // Cascade will save the Payment
+    }
+    
+    // ✅ Cancel a booking and mark payment as "CANCELLED"
+    @Override
+    public void cancelBooking(Long bookingId) {
+        Booking booking = getBookingById(bookingId);
+        if (booking != null && booking.getPayment() != null) {
+            booking.getPayment().setPaymentStatus("CANCELLED");
+            bookingRepository.save(booking); // cascade saves payment
+        }
+    }
+
+    // ✅ Save/Update a modified booking
+    @Override
+    public void saveUpdatedBooking(Booking booking) {
+        bookingRepository.save(booking);
+    }
+
+    @Override
+    public List<Booking> getPaidBookingsByUserEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        List<Booking> all = bookingRepository.findByUser(user);
+        return all.stream()
+                  .filter(b -> b.getPayment() != null)
+                  .toList(); // You can also filter by status if needed
     }
 
 }

@@ -17,4 +17,10 @@ public interface BookingService {
 	    Long saveBooking(BookingDto bookingDto, String userEmail, long busId);
 	    
 	    void updateBookingWithPayment(Booking booking);
+	    
+	    List<Booking> getPaidBookingsByUserEmail(String email);
+	    
+	    void cancelBooking(Long bookingId);
+	    
+	    void saveUpdatedBooking(Booking booking);
 }

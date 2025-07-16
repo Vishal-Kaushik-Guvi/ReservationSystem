@@ -28,13 +28,14 @@ public class BookingController {
     @Autowired
     private BusService busService;
 
-    // View all bookings
-    @GetMapping("/viewBookingHistory")
-    public String getAllBookings(Model model) {
-        List<Booking> bookings = bookingService.getAllBookings();
+    @GetMapping("/booking-history")
+    public String viewUserBookingHistory(@AuthenticationPrincipal UserDetails currentUser, Model model) {
+        String email = currentUser.getUsername();
+        List<Booking> bookings = bookingService.getPaidBookingsByUserEmail(email);
         model.addAttribute("bookings", bookings);
-        return "bookinghistory";
+        return "bookinghistory"; // Make sure this matches your HTML file name
     }
+
 
     // Delete a booking by ID
     @PostMapping("/deleteBooking/{id}")
@@ -80,4 +81,11 @@ public class BookingController {
         Long bookingId = bookingService.saveBooking(bookingDto, email, busId);
         return "redirect:/bookings/payment?bookingId=" + bookingId;
     }
+    
+    @PostMapping("/cancelBooking")
+    public String cancelBooking(@RequestParam("bookingId") Long bookingId) {
+        bookingService.cancelBooking(bookingId);
+        return "redirect:/bookings/booking-history";
+    }
+
 }

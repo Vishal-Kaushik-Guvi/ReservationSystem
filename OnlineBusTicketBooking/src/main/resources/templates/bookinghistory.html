@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Bookings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen p-8 text-[17px]">
+
+<div class="max-w-6xl mx-auto">
+  <h1 class="text-4xl font-bold text-center text-indigo-700 mb-10">🎟️ My Bookings</h1>
+
+  <div th:if="${bookings.isEmpty()}" class="text-center text-gray-600">No bookings found.</div>
+
+  <div class="grid gap-6">
+    <div th:each="booking : ${bookings}" class="bg-white rounded-xl shadow-lg p-6 border border-indigo-200 relative">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xl font-semibold text-indigo-700">Ticket ID: <span th:text="${booking.id}">#000</span></h2>
+        <span class="px-3 py-1 text-sm rounded-full"
+              th:text="${booking.payment.paymentStatus}"
+              th:classappend="${booking.payment.paymentStatus == 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+        </span>
+      </div> 
+
+      <p><strong>Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
+      <p><strong>Route:</strong> <span th:text="${booking.routeFrom}"></span> → <span th:text="${booking.routeTo}"></span></p>
+      <p><strong>Journey Date:</strong> <span th:text="${booking.bus.busJourneyDate}"></span></p>
+      <p><strong>Seats:</strong> <span th:text="${booking.bookseat}"></span></p>
+      <p><strong>Total Fare:</strong> ₹<span th:text="${booking.fare}"></span></p>
+      <p><strong>Booked On:</strong> <span th:text="${booking.bookingDate}"></span> at <span th:text="${booking.bookingTime}"></span></p>
+
+      <div th:if="${booking.payment.paymentStatus == 'PAID'}" class="mt-6">
+        <form th:action="@{/bookings/cancelBooking}" method="post">
+          <input type="hidden" name="bookingId" th:value="${booking.id}" />
+          <button type="submit"
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow-md">
+            ❌ Cancel Ticket
+          </button>
+        </form>
+      </div>
+
+      <div th:if="${booking.payment.paymentStatus == 'CANCELLED'}" class="mt-4 text-red-600 font-medium">
+        Ticket cancelled. Payment will be refunded within 2–3 days.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

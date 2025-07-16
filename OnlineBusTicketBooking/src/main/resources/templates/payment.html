@@ -3,40 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <title>Make Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen p-6">
+<body class="bg-gradient-to-br from-purple-100 to-blue-100 min-h-screen p-6 text-gray-800 text-[17px]">
 
-<div class="max-w-xl mx-auto bg-white shadow p-8 rounded">
-  <h2 class="text-2xl font-bold text-center text-purple-700 mb-6">Make Payment</h2>
+<!-- Payment Container -->
+<div class="max-w-2xl mx-auto mt-10 bg-white shadow-2xl rounded-2xl p-10">
+  <h2 class="text-4xl font-bold text-center text-purple-700 mb-8">💳 Complete Your Payment</h2>
 
-  <!-- Show Booking Info -->
-  <div class="mb-4 text-gray-700 text-sm">
-    <p><strong>Booking ID:</strong> <span th:text="${booking.id}"></span></p>
-    <p><strong>Bus:</strong> <span th:text="${booking.bus.busName}"></span></p>
-    <p><strong>Total Fare:</strong> ₹<span th:text="${booking.fare}"></span></p>
+  <!-- Booking Summary -->
+  <div class="bg-purple-50 border border-purple-200 rounded p-5 mb-6 text-gray-700 text-base space-y-1">
+    <p><strong>🔖 Booking ID:</strong> <span th:text="${booking.id}">#0000</span></p>
+    <p><strong>🚌 Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
+    <p><strong>📍 Route:</strong> <span th:text="${booking.routeFrom}">From</span> → <span th:text="${booking.routeTo}">To</span></p>
+    <p><strong>👥 Seats Booked:</strong> <span th:text="${booking.bookseat}">1</span></p>
+    <p><strong>💰 Total Fare:</strong> ₹<span th:text="${booking.fare}">0</span></p>
   </div>
 
-  <!-- Error -->
-  <div th:if="${error}" class="text-red-600 text-sm mb-4" th:text="${error}"></div>
+  <!-- Error Message -->
+  <div th:if="${error}" class="text-red-600 text-sm mb-4 text-center font-medium" th:text="${error}"></div>
 
   <!-- Payment Form -->
-  <form th:action="@{/bookings/payment(id=${booking.id})}" method="post" th:object="${paymentDto}">
-    <div class="mb-4">
-      <label class="block font-semibold mb-1">Card Number</label>
+  <form th:action="@{/bookings/payment(bookingId=${booking.id})}" method="post" th:object="${paymentDto}" class="space-y-6">
+
+    <div>
+      <label class="block font-semibold mb-1">💳 Card Number</label>
       <input type="text" th:field="*{cardNumber}" placeholder="XXXX-XXXX-XXXX-1234"
-             class="w-full border p-2 rounded" />
+             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
     </div>
 
-    <div class="mb-4">
-      <label class="block font-semibold mb-1">UPI ID</label>
-      <input type="text" th:field="*{upiId}" placeholder="example@upi"
-             class="w-full border p-2 rounded" />
+    <div>
+      <label class="block font-semibold mb-1">📱 UPI ID</label>
+      <input type="text" th:field="*{upiId}" placeholder="yourname@upi"
+             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
     </div>
 
-    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded">
-      Pay Now ✅
-    </button>
+    <!-- Action Buttons -->
+    <div class="flex justify-between mt-8">
+      <a th:href="@{/bookings/addBooking(busId=${booking.bus.busId})}"
+         class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg shadow transition duration-150">
+        ❌ Cancel Payment
+      </a>
+
+      <button type="submit"
+              class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-lg shadow transition duration-150">
+        ✅ Pay Now
+      </button>
+    </div>
   </form>
 </div>
 
