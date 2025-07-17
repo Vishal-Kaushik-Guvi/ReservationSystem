@@ -27,13 +27,35 @@
   <!-- Payment Form -->
   <form th:action="@{/bookings/payment(bookingId=${booking.id})}" method="post" th:object="${paymentDto}" class="space-y-6">
 
+    <!-- Payment Method Selection -->
     <div>
-      <label class="block font-semibold mb-1">💳 Card Number</label>
-      <input type="text" th:field="*{cardNumber}" placeholder="XXXX-XXXX-XXXX-1234"
-             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
+      <label class="block font-semibold mb-1">💰 Select Payment Method</label>
+      <select id="paymentMode" name="paymentMode"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm"
+              onchange="handlePaymentModeChange(this.value)">
+        <option value="" disabled selected>-- Choose --</option>
+        <option value="CARD">Card</option>
+        <option value="UPI">UPI</option>
+      </select>
     </div>
 
-    <div>
+    <!-- Card Payment Inputs -->
+    <div id="cardFields" class="hidden space-y-4">
+      <div>
+        <label class="block font-semibold mb-1">💳 Card Number</label>
+        <input type="text" th:field="*{cardNumber}" placeholder="XXXX-XXXX-XXXX-1234"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">🔐 CVV</label>
+        <input type="text" th:field="*{cvv}" maxlength="3" placeholder="123"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
+      </div>
+    </div>
+
+    <!-- UPI Payment Input -->
+    <div id="upiField" class="hidden">
       <label class="block font-semibold mb-1">📱 UPI ID</label>
       <input type="text" th:field="*{upiId}" placeholder="yourname@upi"
              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 shadow-sm" />
@@ -53,6 +75,25 @@
     </div>
   </form>
 </div>
+
+<!-- Redux-like JS for toggling fields -->
+<script>
+  function handlePaymentModeChange(mode) {
+    const cardFields = document.getElementById("cardFields");
+    const upiField = document.getElementById("upiField");
+
+    if (mode === "CARD") {
+      cardFields.classList.remove("hidden");
+      upiField.classList.add("hidden");
+    } else if (mode === "UPI") {
+      upiField.classList.remove("hidden");
+      cardFields.classList.add("hidden");
+    } else {
+      cardFields.classList.add("hidden");
+      upiField.classList.add("hidden");
+    }
+  }
+</script>
 
 </body>
 </html>

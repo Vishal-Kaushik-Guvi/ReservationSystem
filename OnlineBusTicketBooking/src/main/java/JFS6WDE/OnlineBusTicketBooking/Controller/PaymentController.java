@@ -38,6 +38,7 @@ public class PaymentController {
         Payment payment = new Payment();
         payment.setCardNumber(paymentDto.getCardNumber());
         payment.setUpiId(paymentDto.getUpiId());
+        payment.setCvv(paymentDto.getCvv());
         payment.setPaymentStatus("PAID");
         payment.setBooking(booking);
 

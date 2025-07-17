@@ -28,23 +28,18 @@ public class BookingController {
     @Autowired
     private BusService busService;
 
+    // ✅ Show user's booking history
     @GetMapping("/booking-history")
     public String viewUserBookingHistory(@AuthenticationPrincipal UserDetails currentUser, Model model) {
         String email = currentUser.getUsername();
         List<Booking> bookings = bookingService.getPaidBookingsByUserEmail(email);
         model.addAttribute("bookings", bookings);
-        return "bookinghistory"; // Make sure this matches your HTML file name
+        return "bookinghistory"; // Thymeleaf template
     }
 
+    // ❌ Removed old /deleteBooking/{id} endpoint (no longer used)
 
-    // Delete a booking by ID
-    @PostMapping("/deleteBooking/{id}")
-    public String deleteBooking(@PathVariable long id) {
-        bookingService.deleteBookingById(id);
-        return "redirect:/bookings/viewBookingHistory";
-    }
-
-    // View a specific booking
+    // ✅ View a specific booking
     @GetMapping("/viewBooking")
     public String findBookingById(@RequestParam long id, Model model) {
         Booking booking = bookingService.getBookingById(id);
@@ -52,7 +47,7 @@ public class BookingController {
         return "viewbooking";
     }
 
-    // Show form to book a specific bus
+    // ✅ Show form to book a bus
     @GetMapping("/addBooking")
     public String showAddBookingForm(@RequestParam long busId, Model model) {
         Bus bus = busService.getBusById(busId);
@@ -61,7 +56,7 @@ public class BookingController {
         return "addbooking";
     }
 
-    // Submit booking
+    // ✅ Submit booking and redirect to payment
     @PostMapping("/addBooking")
     public String addBooking(
             @RequestParam long busId,
@@ -81,11 +76,11 @@ public class BookingController {
         Long bookingId = bookingService.saveBooking(bookingDto, email, busId);
         return "redirect:/bookings/payment?bookingId=" + bookingId;
     }
-    
+
+    // ✅ Cancel booking (hybrid logic in service: set CANCELLED + archive/delete)
     @PostMapping("/cancelBooking")
     public String cancelBooking(@RequestParam("bookingId") Long bookingId) {
         bookingService.cancelBooking(bookingId);
         return "redirect:/bookings/booking-history";
     }
-
 }

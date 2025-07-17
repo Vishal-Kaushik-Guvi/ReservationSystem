@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import JFS6WDE.OnlineBusTicketBooking.Dto.BookingDto;
+import JFS6WDE.OnlineBusTicketBooking.Entities.ArchivedBooking;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Booking;
 import JFS6WDE.OnlineBusTicketBooking.Entities.Bus;
+import JFS6WDE.OnlineBusTicketBooking.Entities.Payment;
 import JFS6WDE.OnlineBusTicketBooking.Entities.User;
+import JFS6WDE.OnlineBusTicketBooking.Repository.ArchivedBookingRepository;
 import JFS6WDE.OnlineBusTicketBooking.Repository.BookingRepository;
 import JFS6WDE.OnlineBusTicketBooking.Repository.BusRepository;
 import JFS6WDE.OnlineBusTicketBooking.Repository.UserRepository;
@@ -19,6 +22,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+	
+	@Autowired
+	private ArchivedBookingRepository  archivedBookingRepository;
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -89,15 +95,43 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking); // Cascade will save the Payment
     }
     
-    // ✅ Cancel a booking and mark payment as "CANCELLED"
     @Override
     public void cancelBooking(Long bookingId) {
-        Booking booking = getBookingById(bookingId);
+        Booking booking = bookingRepository.findById(bookingId).orElse(null);
         if (booking != null && booking.getPayment() != null) {
-            booking.getPayment().setPaymentStatus("CANCELLED");
-            bookingRepository.save(booking); // cascade saves payment
+
+            // Create archived booking copy
+            ArchivedBooking archived = new ArchivedBooking();
+            archived.setId(booking.getId());
+            archived.setRouteFrom(booking.getRouteFrom());
+            archived.setRouteTo(booking.getRouteTo());
+            archived.setBookseat(booking.getBookseat());
+            archived.setFare(booking.getFare());
+            archived.setBookingDate(booking.getBookingDate());
+            archived.setBookingTime(booking.getBookingTime());
+            archived.setBus(booking.getBus());
+            archived.setUser(booking.getUser());
+
+            // Copy and update payment
+            Payment oldPayment = booking.getPayment();
+            Payment paymentCopy = new Payment();
+            paymentCopy.setCardNumber(oldPayment.getCardNumber());
+            paymentCopy.setUpiId(oldPayment.getUpiId());
+            paymentCopy.setPaymentDate(oldPayment.getPaymentDate());
+            paymentCopy.setPaymentTime(oldPayment.getPaymentTime());
+            paymentCopy.setPaymentMode(oldPayment.getPaymentMode());
+            paymentCopy.setPaymentStatus("CANCELLED");
+
+            // Set the relationship (IMPORTANT)
+            paymentCopy.setArchivedBooking(archived);
+            archived.setPayment(paymentCopy);
+
+            // Save archived and delete booking
+            archivedBookingRepository.save(archived);  // This saves payment if cascade is configured
+            bookingRepository.deleteById(bookingId);
         }
     }
+
 
     // ✅ Save/Update a modified booking
     @Override

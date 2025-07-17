@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class PaymentDto {
     private String cardNumber;
     private String upiId;
+    private String cvv;
 }
