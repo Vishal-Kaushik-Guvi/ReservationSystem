@@ -39,31 +39,36 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Consider enabling this in production
-                .authorizeHttpRequests(authorize -> authorize
-                	    .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                	    .requestMatchers("/register/**", "/index", "/").permitAll()
-                	    .requestMatchers("/users", "/addBus", "/adminBusList").hasRole("ADMIN")
-                	    .requestMatchers("/book-ticket", "/find-bus", "/booking-history").authenticated() // 👈 require login
-                	    .anyRequest().authenticated()
-                	)
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler(authenticationSuccessHandler())
-                        .permitAll()
-                        .failureHandler((request, response, exception) -> {
-                            logger.error("Authentication failure: {}", exception.getMessage());
-                            response.sendRedirect("/login?error");
-                        }))
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .permitAll());
-        return http.build();
-    }
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable()) // Enable in production with proper setup
+        .authorizeHttpRequests(authorize -> authorize
+            // ✅ Allow static resources (Tailwind CDN, AOS, images, etc.)
+            .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/static/**").permitAll()
+            .requestMatchers("/", "/index", "/register/**", "/browseBuses", "/about", "/login").permitAll()
+            .requestMatchers("/users", "/addBus", "/adminBusList").hasRole("ADMIN")
+            .requestMatchers("/book-ticket", "/find-bus", "/booking-history").authenticated()
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .successHandler(authenticationSuccessHandler()) // ✅ your custom success handler
+            .permitAll()
+            .failureHandler((request, response, exception) -> {
+                logger.error("Authentication failure: {}", exception.getMessage());
+                response.sendRedirect("/login?error");
+            })
+        )
+        .logout(logout -> logout
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .permitAll()
+        );
+
+    return http.build();
+}
+
 
     // Handiling Request accordingly
     @Bean
