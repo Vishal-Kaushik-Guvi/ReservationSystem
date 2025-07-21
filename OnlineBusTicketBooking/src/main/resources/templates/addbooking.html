@@ -2,22 +2,43 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title th:text="${pageTitle} ?: 'Add Booking'">Add Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${pageTitle} ?: 'Add Bookings'">Add Bookings</title>
+
+  <!-- ✅ Early Dark Mode Init -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <!-- ✅ Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    };
+  </script>
+
+  <!-- ✅ Alpine.js (Dropdowns) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- ✅ AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 </head>
 
-<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen text-[17px] font-sans">
+<body class="bg-gradient-to-r from-indigo-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
-  <!-- Navbar -->
+  <!-- ✅ Navbar Fragment -->
   <div th:replace="fragments/navbar :: navbar"></div>
 
   <!-- Booking Card -->
-  <div class="max-w-5xl mx-auto mt-10 bg-white/80 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl p-10">
+<div class="max-w-5xl mx-auto mt-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200 dark:border-gray-600 shadow-2xl rounded-2xl p-10 transition-colors duration-300">
+
     <h2 class="text-4xl font-extrabold text-center text-green-700 mb-10 drop-shadow">🎫 Confirm Your Booking</h2>
 
     <!-- Bus Info Card -->
-    <div class="bg-blue-50 border-l-4 border-blue-400 shadow-md rounded-xl p-6 mb-10 space-y-2">
+    <div class="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
       <p><strong>🚌 Bus:</strong> <span th:text="${bus.busName}">Bus Name</span></p>
       <p><strong>📍 Route:</strong> <span th:text="${bus.routeFrom}">From</span> → <span th:text="${bus.routeTo}">To</span></p>
       <p><strong>🗓️ Date:</strong> <span th:text="${bus.busJourneyDate}">Journey Date</span></p>
@@ -27,27 +48,29 @@
       <p><strong>🪑 Available Seats:</strong> <span id="availableSeats" th:text="${bus.seats}">Seats</span></p>
     </div>
 
+<br>
     <!-- Booking Form -->
-    <form th:action="@{/bookings/addBooking(busId=${bus.busId})}" method="post" th:object="${bookingDto}" onsubmit="return validateSeatCount()">
-      <input type="hidden" name="busId" th:value="${bus.busId}" />
+<!-- Booking Form -->
+<form th:action="@{/bookings/addBooking(busId=${bus.busId})}" method="post" th:object="${bookingDto}" onsubmit="return validateSeatCount()">
+  <input type="hidden" name="busId" th:value="${bus.busId}" />
 
-      <!-- Mobile Number -->
-      <div class="mb-8">
-        <label for="mobile" class="block text-gray-800 font-semibold mb-2">📞 Mobile Number</label>
-        <input type="tel" id="mobile" th:field="*{mobileNumber}" required pattern="[0-9]{10}" maxlength="10"
-               placeholder="Enter 10-digit number"
-               class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-lg shadow-sm" />
-        <p class="text-sm text-gray-500 mt-1">Must be exactly 10 digits</p>
-      </div>
+  <!-- Mobile Number -->
+  <div class="mb-8">
+    <label for="mobile" class="block text-gray-800 dark:text-gray-100 font-semibold mb-2">📞 Mobile Number</label>
+    <input type="tel" id="mobile" th:field="*{mobileNumber}" required pattern="[0-9]{10}" maxlength="10"
+           placeholder="Enter 10-digit number"
+           class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-green-500 text-lg shadow-sm" />
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Must be exactly 10 digits</p>
+  </div>
 
-      <!-- Seat Count -->
-      <div class="mb-8">
-        <label for="bookseat" class="block text-gray-800 font-semibold mb-2">🪑 Number of Seats</label>
-        <input type="number" id="bookseat" th:field="*{bookseat}" min="1"
-               oninput="generatePassengerFields(this.value)" required
-               class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-lg shadow-sm" />
-        <p id="seatError" class="text-red-600 mt-1 hidden">❌ Requested seats exceed available.</p>
-      </div>
+  <!-- Seat Count -->
+  <div class="mb-8">
+    <label for="bookseat" class="block text-gray-800 dark:text-gray-100 font-semibold mb-2">🪑 Number of Seats</label>
+    <input type="number" id="bookseat" th:field="*{bookseat}" min="1"
+           oninput="generatePassengerFields(this.value)" required
+           class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-green-500 text-lg shadow-sm" />
+    <p id="seatError" class="text-red-600 dark:text-red-400 mt-1 hidden">❌ Requested seats exceed available.</p>
+  </div>
 
       <!-- Passenger Fields -->
       <div id="passengerDetailsContainer" class="space-y-6 mb-10"></div>
@@ -62,57 +85,104 @@
     </form>
   </div>
 
-  <!-- JS -->
+<!-- ✅ Footer -->
+  <footer class="bg-white dark:bg-gray-900 text-center py-4 mt-10 shadow-inner">
+    <p class="text-gray-600 dark:text-gray-300">© 2025 GoReserve. All rights reserved.</p>
+  </footer>
+
+  <!-- ✅ AOS + VanillaTilt -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+
+  <!-- ✅ Dark Mode Toggle, AOS, Tilt Init -->
   <script>
-    function generatePassengerFields(seatCount) {
-      const available = parseInt(document.getElementById("availableSeats").innerText);
-      const error = document.getElementById("seatError");
-      const container = document.getElementById("passengerDetailsContainer");
+    document.addEventListener('DOMContentLoaded', function () {
+      AOS.init({ once: true, duration: 1000 });
 
-      if (seatCount > available) {
-        error.classList.remove("hidden");
-        container.innerHTML = "";
-        return;
-      } else {
-        error.classList.add("hidden");
+      VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+        max: 15,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.2
+      });
+
+      const toggle = document.getElementById('darkModeToggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          toggle.innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+        toggle.innerText = document.documentElement.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
       }
 
-      container.innerHTML = '';
-      for (let i = 1; i <= seatCount; i++) {
-        const group = document.createElement('div');
-        group.className = "grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/90 p-5 rounded-xl shadow-md";
-
-        group.innerHTML = `
-          <div>
-            <label class="block text-gray-800 font-semibold mb-1">👤 Passenger ${i} Name</label>
-            <input type="text" name="passengerNames" required
-                   placeholder="Enter name"
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-800 font-semibold mb-1">🎂 Passenger ${i} Age</label>
-            <input type="number" name="passengerAges" required min="18" max="100"
-                   placeholder="Age (18–100)"
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-          </div>
-        `;
-        container.appendChild(group);
+      const toggleMobile = document.getElementById('darkModeToggleMobile');
+      if (toggleMobile) {
+        toggleMobile.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          toggleMobile.innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+        toggleMobile.innerText = document.documentElement.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
       }
-    }
-
-    function validateSeatCount() {
-      const seatInput = document.getElementById("bookseat");
-      const available = parseInt(document.getElementById("availableSeats").innerText);
-      const requested = parseInt(seatInput.value);
-      const error = document.getElementById("seatError");
-
-      if (requested > available || requested <= 0) {
-        error.classList.remove("hidden");
-        return false;
-      }
-      return true;
-    }
+    });
   </script>
+  
+  <!-- JS -->
+<script>
+  function generatePassengerFields(seatCount) {
+    const available = parseInt(document.getElementById("availableSeats").innerText);
+    const error = document.getElementById("seatError");
+    const container = document.getElementById("passengerDetailsContainer");
+
+    if (seatCount > available) {
+      error.classList.remove("hidden");
+      container.innerHTML = "";
+      return;
+    } else {
+      error.classList.add("hidden");
+    }
+
+    container.innerHTML = '';
+    for (let i = 1; i <= seatCount; i++) {
+      const group = document.createElement('div');
+      group.className = "grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all";
+
+      group.innerHTML = `
+        <div>
+          <label class="block text-gray-800 dark:text-gray-100 font-semibold mb-1">👤 Passenger ${i} Name</label>
+          <input type="text" name="passengerNames" required
+                 placeholder="Enter name"
+                 class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm" />
+        </div>
+        <div>
+          <label class="block text-gray-800 dark:text-gray-100 font-semibold mb-1">🎂 Passenger ${i} Age</label>
+          <input type="number" name="passengerAges" required min="18" max="100"
+                 placeholder="Age (18–100)"
+                 class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 shadow-sm" />
+        </div>
+      `;
+
+      container.appendChild(group);
+    }
+  }
+
+  function validateSeatCount() {
+    const seatInput = document.getElementById("bookseat");
+    const available = parseInt(document.getElementById("availableSeats").innerText);
+    const requested = parseInt(seatInput.value);
+    const error = document.getElementById("seatError");
+
+    if (requested > available || requested <= 0) {
+      error.classList.remove("hidden");
+      return false;
+    }
+    return true;
+  }
+</script>
+
 
 </body>
 </html>

@@ -2,64 +2,141 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>My Bookings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${pageTitle} ?: 'GoReserve'">My Bookings</title>
+
+  <!-- ✅ Early Dark Mode Init -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <!-- ✅ Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    };
+  </script>
+
+  <!-- ✅ Alpine.js (Dropdowns) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- ✅ AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen text-[17px]">
+
+<body class="bg-gradient-to-r from-indigo-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
   <!-- ✅ Navbar Fragment -->
   <div th:replace="fragments/navbar :: navbar"></div>
 
-  <!-- ✅ Booking History Content -->
-  <div class="max-w-6xl mx-auto px-4 py-10">
-    <h1 class="text-4xl font-bold text-center text-indigo-700 mb-10">🎟️ My Bookings</h1>
+  <!-- ✅ Main Content Fragment -->
+  <main class="py-10 px-4 max-w-7xl mx-auto">
+    <div th:fragment="content">
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <h1 class="text-4xl font-bold text-center text-indigo-700 dark:text-indigo-300 mb-10">🎟️ My Bookings</h1>
 
-    <!-- ✅ No bookings message -->
-    <div th:if="${bookings.isEmpty()}" class="text-center text-gray-600">
-      No bookings found.
-    </div>
-
-    <!-- ✅ Bookings Grid -->
-    <div class="grid gap-6" th:if="${!bookings.isEmpty()}">
-      <div th:each="booking : ${bookings}" class="bg-white shadow-md rounded-lg p-6 border border-indigo-200">
-        
-        <!-- ✅ Header Row -->
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-indigo-700">
-            Ticket ID: <span th:text="${booking.id}">123</span>
-          </h2>
-          <span class="px-3 py-1 text-sm rounded-full"
-                th:text="${booking.payment.paymentStatus}"
-                th:classappend="${booking.payment.paymentStatus == 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-          </span>
+        <!-- ✅ No bookings -->
+        <div th:if="${bookings.isEmpty()}" class="text-center text-gray-600 dark:text-gray-300">
+          No bookings found.
         </div>
 
-        <!-- ✅ Ticket Info -->
-        <p><strong>Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
-        <p><strong>Route:</strong> <span th:text="${booking.routeFrom}">From</span> → <span th:text="${booking.routeTo}">To</span></p>
-        <p><strong>Journey Date:</strong> <span th:text="${booking.bus.busJourneyDate}">2025-07-20</span></p>
-        <p><strong>Seats Booked:</strong> <span th:text="${booking.bookseat}">2</span></p>
-        <p><strong>Total Fare:</strong> ₹<span th:text="${booking.fare}">800</span></p>
-        <p><strong>Booked On:</strong> <span th:text="${booking.bookingDate}">2025-07-15</span> at <span th:text="${booking.bookingTime}">15:30</span></p>
+        <!-- ✅ Bookings exist -->
+        <div class="grid gap-6" th:if="${!bookings.isEmpty()}">
+          <div th:each="booking : ${bookings}" class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-indigo-200 dark:border-gray-700 transition-all duration-300" data-aos="fade-up">
 
-        <!-- ✅ Cancel Ticket Button -->
-        <div th:if="${booking.payment.paymentStatus == 'PAID'}" class="mt-6">
-          <form th:action="@{/bookings/cancelBooking}" method="post">
-            <input type="hidden" name="bookingId" th:value="${booking.id}" />
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
-              ❌ Cancel Ticket
-            </button>
-          </form>
-        </div>
+            <!-- ✅ Ticket Header -->
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-semibold text-indigo-700 dark:text-indigo-300">
+                Ticket ID: <span th:text="${booking.id}">123</span>
+              </h2>
+              <span class="px-3 py-1 text-sm rounded-full font-semibold"
+                    th:text="${booking.payment.paymentStatus}"
+                    th:classappend="${booking.payment.paymentStatus == 'PAID' ? 'bg-green-100 dark:bg-green-700 dark:text-white text-green-700' : 'bg-red-100 dark:bg-red-700 dark:text-white text-red-700'}">
+              </span>
+            </div>
 
-        <!-- ✅ Refund Message -->
-        <div th:if="${booking.payment.paymentStatus == 'CANCELLED'}" class="mt-4 text-red-600 font-medium">
-          Ticket cancelled. Payment will be refunded within 2–3 days.
+            <!-- ✅ Ticket Info -->
+            <div class="space-y-1">
+              <p><strong>Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
+              <p><strong>Route:</strong> <span th:text="${booking.routeFrom}">From</span> → <span th:text="${booking.routeTo}">To</span></p>
+              <p><strong>Journey Date:</strong> <span th:text="${booking.bus.busJourneyDate}">2025-07-20</span></p>
+              <p><strong>Seats Booked:</strong> <span th:text="${booking.bookseat}">2</span></p>
+              <p><strong>Total Fare:</strong> ₹<span th:text="${booking.fare}">800</span></p>
+              <p><strong>Booked On:</strong> 
+                <span th:text="${booking.bookingDate}">2025-07-15</span> at 
+                <span th:text="${booking.bookingTime}">15:30</span>
+              </p>
+            </div>
+
+            <!-- ✅ Cancel Button -->
+            <div th:if="${booking.payment.paymentStatus == 'PAID'}" class="mt-6">
+              <form th:action="@{/bookings/cancelBooking}" method="post">
+                <input type="hidden" name="bookingId" th:value="${booking.id}" />
+                <button type="submit"
+                        onclick="return confirm('Are you sure you want to cancel this ticket?')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                  ❌ Cancel Ticket
+                </button>
+              </form>
+            </div>
+
+            <!-- ✅ Refund Message -->
+            <div th:if="${booking.payment.paymentStatus == 'CANCELLED'}" class="mt-4 text-red-600 dark:text-red-400 font-medium">
+              Ticket cancelled. Payment will be refunded within 2–3 days.
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
+  <!-- ✅ Footer -->
+  <footer class="bg-white dark:bg-gray-900 text-center py-4 mt-10 shadow-inner">
+    <p class="text-gray-600 dark:text-gray-300">© 2025 GoReserve. All rights reserved.</p>
+  </footer>
+
+  <!-- ✅ AOS + VanillaTilt -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+
+  <!-- ✅ Dark Mode Toggle, AOS, Tilt Init -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      AOS.init({ once: true, duration: 1000 });
+
+      VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+        max: 15,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.2
+      });
+
+      const toggle = document.getElementById('darkModeToggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          toggle.innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+        toggle.innerText = document.documentElement.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
+      }
+
+      const toggleMobile = document.getElementById('darkModeToggleMobile');
+      if (toggleMobile) {
+        toggleMobile.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          toggleMobile.innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+        toggleMobile.innerText = document.documentElement.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
+      }
+    });
+  </script>
 </body>
 </html>
