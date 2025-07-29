@@ -25,11 +25,11 @@ public class BusServiceImpl implements BusService {
                 .orElseThrow(() -> new ResourceNotFound("Bus not found with id: " + id));
     }
 
-
     // Admin methods
     @Override
     public Bus createBus(Bus bus) throws ResourceNotFound, AdminException {
-       bus.setFare(bus.getDistance()*10);
+    	int price = bus.getFare();
+       bus.setFare(bus.getDistance()*2*price);
        return busRepo.save(bus);
     }
 

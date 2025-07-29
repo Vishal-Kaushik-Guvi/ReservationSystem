@@ -12,5 +12,4 @@ public class OnlineBusTicketBookingApplication {
 		System.out.println("Bus Ticket Booking Application is Running... ");
 	}
 
-}
-  
+}  

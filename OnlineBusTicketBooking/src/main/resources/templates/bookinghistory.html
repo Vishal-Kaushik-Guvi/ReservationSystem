@@ -44,10 +44,13 @@
         </div>
 
         <!-- ✅ Bookings exist -->
-        <div class="grid gap-6" th:if="${!bookings.isEmpty()}">
-          <div th:each="booking : ${bookings}" class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-indigo-200 dark:border-gray-700 transition-all duration-300" data-aos="fade-up">
+        <div class="grid gap-8" th:if="${!bookings.isEmpty()}">
+          <div th:each="booking : ${bookings}" class="relative border-l-4 border-indigo-500 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg transition duration-300 overflow-hidden" data-aos="fade-up">
 
-            <!-- ✅ Ticket Header -->
+            <!-- Decorative Strip -->
+            <div class="absolute top-0 left-0 h-full w-2 bg-indigo-500 rounded-r"></div>
+
+            <!-- Ticket Header -->
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-semibold text-indigo-700 dark:text-indigo-300">
                 Ticket ID: <span th:text="${booking.id}">123</span>
@@ -58,20 +61,20 @@
               </span>
             </div>
 
-            <!-- ✅ Ticket Info -->
-            <div class="space-y-1">
-              <p><strong>Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
-              <p><strong>Route:</strong> <span th:text="${booking.routeFrom}">From</span> → <span th:text="${booking.routeTo}">To</span></p>
-              <p><strong>Journey Date:</strong> <span th:text="${booking.bus.busJourneyDate}">2025-07-20</span></p>
-              <p><strong>Seats Booked:</strong> <span th:text="${booking.bookseat}">2</span></p>
-              <p><strong>Total Fare:</strong> ₹<span th:text="${booking.fare}">800</span></p>
-              <p><strong>Booked On:</strong> 
+            <!-- Ticket Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
+              <p><strong class="text-indigo-600 dark:text-indigo-400">🚌 Bus:</strong> <span th:text="${booking.bus.busName}">Bus Name</span></p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">📍 Route:</strong> <span th:text="${booking.routeFrom}">From</span> → <span th:text="${booking.routeTo}">To</span></p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">📅 Journey:</strong> <span th:text="${booking.bus.busJourneyDate}">2025-07-20</span></p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">👥 Seats:</strong> <span th:text="${booking.bookseat}">2</span></p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">💵 Fare:</strong> ₹<span th:text="${booking.fare}">800</span></p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">🕓 Booked On:</strong> 
                 <span th:text="${booking.bookingDate}">2025-07-15</span> at 
                 <span th:text="${booking.bookingTime}">15:30</span>
               </p>
             </div>
 
-            <!-- ✅ Cancel Button -->
+            <!-- Cancel Button -->
             <div th:if="${booking.payment.paymentStatus == 'PAID'}" class="mt-6">
               <form th:action="@{/bookings/cancelBooking}" method="post">
                 <input type="hidden" name="bookingId" th:value="${booking.id}" />
@@ -83,7 +86,7 @@
               </form>
             </div>
 
-            <!-- ✅ Refund Message -->
+            <!-- Refund Message -->
             <div th:if="${booking.payment.paymentStatus == 'CANCELLED'}" class="mt-4 text-red-600 dark:text-red-400 font-medium">
               Ticket cancelled. Payment will be refunded within 2–3 days.
             </div>

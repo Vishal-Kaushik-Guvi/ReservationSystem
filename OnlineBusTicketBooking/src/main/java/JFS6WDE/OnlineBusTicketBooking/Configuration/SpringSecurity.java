@@ -39,35 +39,58 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-   @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable()) // Enable in production with proper setup
-        .authorizeHttpRequests(authorize -> authorize
-            // ✅ Allow static resources (Tailwind CDN, AOS, images, etc.)
-            .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/static/**").permitAll()
-            .requestMatchers("/", "/index", "/register/**", "/browseBuses", "/about", "/login").permitAll()
-            .requestMatchers("/users", "/addBus", "/adminBusList").hasRole("ADMIN")
-            .requestMatchers("/book-ticket", "/find-bus", "/booking-history").authenticated()
-            .anyRequest().authenticated()
-        )
-        .formLogin(form -> form
-            .loginPage("/login")
-            .loginProcessingUrl("/login")
-            .successHandler(authenticationSuccessHandler()) // ✅ your custom success handler
-            .permitAll()
-            .failureHandler((request, response, exception) -> {
-                logger.error("Authentication failure: {}", exception.getMessage());
-                response.sendRedirect("/login?error");
-            })
-        )
-        .logout(logout -> logout
-            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-            .permitAll()
-        );
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            // 🔐 Enable CSRF (recommended for production)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") // optional if using H2 DB
+            )
 
-    return http.build();
-}
+            // ✅ Authorization Rules
+            .authorizeHttpRequests(auth -> auth
+                // Allow public resources
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/static/**").permitAll()
+                .requestMatchers("/", "/index", "/register/**", "/browseBuses", "/about", "/login").permitAll()
+
+                // Admin-only section
+                .requestMatchers("/adminBusList", "/addBus", "/updateBus", "/deleteBus").hasRole("ADMIN")
+
+
+                // Authenticated users (both USER and ADMIN)
+                .requestMatchers("/book-ticket", "/find-bus", "/booking-history").authenticated()
+
+                // All other requests
+                .anyRequest().authenticated()
+            )
+
+            // ✅ Custom Login Config
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .successHandler(authenticationSuccessHandler()) // custom redirect logic
+                .permitAll()
+                .failureHandler((request, response, exception) -> {
+                    // Log and redirect on failed login
+                    System.err.println("Authentication failure: " + exception.getMessage());
+                    response.sendRedirect("/login?error");
+                })
+            )
+
+            // ✅ Logout Config
+            .logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/") // optional redirect after logout
+                .permitAll()
+            )
+
+            // ✅ Optional: Access Denied Page (403)
+            .exceptionHandling(ex -> ex
+                .accessDeniedPage("/403")
+            );
+
+        return http.build();
+    }
 
 
     // Handiling Request accordingly
