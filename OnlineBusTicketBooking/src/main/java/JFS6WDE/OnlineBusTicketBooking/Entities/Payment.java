@@ -8,8 +8,6 @@ import lombok.*;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Payment {
 
     @Id
@@ -31,9 +29,6 @@ public class Payment {
     private LocalTime paymentTime;
     
     private String paymentMode;
-    
-    
-
     
     @OneToOne
     @JoinColumn(name = "archived_booking_id")  // Allow null for original booking case

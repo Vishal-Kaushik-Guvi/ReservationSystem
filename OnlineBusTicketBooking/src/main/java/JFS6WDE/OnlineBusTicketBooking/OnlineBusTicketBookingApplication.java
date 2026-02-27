@@ -9,7 +9,7 @@ public class OnlineBusTicketBookingApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(OnlineBusTicketBookingApplication.class, args);
-		System.out.println("Bus Ticket Booking Application is Running... ");
+		System.out.println("Go-Reserve is Running... ");
 	}
 
 }  
